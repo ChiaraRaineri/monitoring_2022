@@ -11,4 +11,7 @@ fishes <- c(10,50,60,100,200)
 # A functin is used with arguments inside
 plot(water, fishes)
 
+# The data we developed can be stored in a table
+# a table in R is called data frame
 
+streams <- data.frame(water, fishes)
