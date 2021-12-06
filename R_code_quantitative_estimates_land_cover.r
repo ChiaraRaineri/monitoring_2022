@@ -52,6 +52,7 @@ ggplot(proportion1992, aes(x=cover, y=prop1992, color=cover)) + geom_bar(stat="i
 library(raster)
 library(RStoolbox)
 library(ggplot2)
+library(gridExtra)
 
 setwd("C:/lab/")
 
@@ -83,8 +84,6 @@ cover <- c("Forest", "Agriculture")
 prop1992 <- c(propforest, propagri)
 proportion1992 <- data.frame(cover, prop1992)
 
-ggplot(proportion1992, aes(x=cover, y=prop1992, color=cover)) + geom_bar(stat="identity", fill="white")
-
 #### 
 
 l2006c <- unsuperClass(l2006, nClasses=2)
@@ -93,26 +92,23 @@ l2006c
 plot(l2006c$map)
 freq(l2006c$map)
 
-total <- 179335 + 163391
-propagri2006 <- 163391 / total 
-propforest2006 <- 179335 / total 
+total2006 <- 179335 + 163391
+propagri2006 <- 163391 / total2006
+propforest2006 <- 179335 / total2006 
 # [1,] forest
 # [2,] agriculture
 
 cover <- c("Forest", "Agriculture")
 prop2006 <- c(propforest2006, propagri2006)
 
-proportion <- data.frame(cover, prop1992, prop2006)
-ggplot(proportion, aes(x=cover, y=prop2006, color=cover)) + geom_bar(stat="identity", fill="white")
+proportion2006 <- data.frame(cover, prop2006)
 
 # Plotting altogether
-library(gridExtra)
 
-p1 <- ggplot(proportion, aes(x=cover, y=prop1992, color=cover)) + geom_bar(stat="identity", fill="white")
-p2 <- ggplot(proportion, aes(x=cover, y=prop2006, color=cover)) + geom_bar(stat="identity", fill="white") 
-grid.arrange(p1, p2, nrows=1)  # doesn't work
- 
-ggplot(proportion, aes(x=cover, y=prop2006, color=cover)) + geom_bar(stat="identity", fill="white") + ylim(0,1)
-ggplot(proportion, aes(x=cover, y=prop1992, color=cover)) + geom_bar(stat="identity", fill="white") + ylim(0,1)
-grid.arrange(p1, p2, nrows=1)  # doesn't work
+p1 <- ggplot(proportion1992, aes(x=cover, y=prop1992, color=cover)) + geom_bar(stat="identity", fill="white") + ylim(0,1)
+p2 <- ggplot(proportion2006, aes(x=cover, y=prop2006, color=cover)) + geom_bar(stat="identity", fill="white") + ylim(0,1)
+
+proportion <- data.frame(cover, prop1992, prop2006)
+proportion
+grid.arrange(p1, p2, nrow=1)
 
