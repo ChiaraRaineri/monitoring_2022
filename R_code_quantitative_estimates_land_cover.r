@@ -112,3 +112,42 @@ proportion <- data.frame(cover, prop1992, prop2006)
 proportion
 grid.arrange(p1, p2, nrow=1)
 
+
+# Day 3
+
+install.packages("patchwork")
+library(patchwork)
+
+# With this package we can plot multiple graphs, just like we did before
+
+p1 + p2   # The graphs are one beside the other
+p1/p2   # The graphs are one on top of the other
+
+# This package work also with images (raster data), but we need to have ggplot2
+
+# Instead of using plotRGB we are going to use ggRGB
+plotRGB(l1992, r=1, g=2, b=3, stretch="Lin")
+
+ggRGB(l1992, r=1, g=2, b=3, stretch="lin")
+ggRGB(l1992, r=1, g=2, b=3, stretch="hist")
+ggRGB(l1992, r=1, g=2, b=3, stretch="sqrt")
+ggRGB(l1992, r=1, g=2, b=3, stretch="log")   # In R log is natural log
+
+gp1 <- ggRGB(l1992, r=1, g=2, b=3, stretch="lin")
+gp2 <- ggRGB(l1992, r=1, g=2, b=3, stretch="hist")
+gp3 <- ggRGB(l1992, r=1, g=2, b=3, stretch="sqrt")
+gp4 <- ggRGB(l1992, r=1, g=2, b=3, stretch="log")
+gp1 + gp2 + gp3 + gp4
+
+# Multitemporal patchwork
+gp1 <- ggRGB(l1992, r=1, g=2, b=3)
+gp5 <- ggRGB(l2006, r=1, g=2, b=3)
+gp1 + gp5
+gp1 / gp5
+
+
+
+
+
+
+
