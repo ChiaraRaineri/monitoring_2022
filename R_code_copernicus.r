@@ -40,3 +40,65 @@ ggtitle("cividis palette")
 
 # viridis, cividis, magma, inferno, turbo, mako, plasma, rocket
 
+
+#######
+
+rlist <- list.files(pattern="SCE")
+rlist
+
+list_rast <- lapply(rlist, raster)
+list_rast
+
+snowstack <- stack(list_rast)
+snowstack
+
+ssummer <- snowstack$Snow.Cover.Extent.1
+swinter <- snowstack$Snow.Cover.Extent.2
+
+ggplot() +
+geom_raster(ssummer, mapping = aes(x=x, y=y, fill=Snow.Cover.Extent.1)) +
+scale_fill_viridis(option="viridis") +
+ggtitle("Snow cover during my birthday!")
+
+ggplot() +
+geom_raster(swinter, mapping = aes(x=x, y=y, fill=Snow.Cover.Extent.2)) +
+scale_fill_viridis(option="viridis") +
+ggtitle("Snow cover during freezing winter!")
+
+# Let's patchwork them together
+library(patchwork)
+
+p1 <- ggplot() + 
+geom_raster(ssummer, mapping = aes(x=x, y=y, fill=Snow.Cover.Extent.1)) +
+scale_fill_viridis(option="viridis") +
+ggtitle("Snow cover during summer")
+ 
+p2 <- ggplot() + 
+geom_raster(swinter, mapping = aes(x=x, y=y, fill=Snow.Cover.Extent.2)) +
+scale_fill_viridis(option="viridis") +
+ggtitle("Snow cover during winter")
+ 
+p1 / p2
+
+# Crop a image on a certain area
+# Longitude from 0 to 20
+# Latitude from 30 to 50
+
+ext <- c(0, 20, 30, 50)
+ssummer_cropped <- crop(ssummer, ext)
+swinter_cropped <- crop(swinter, ext)
+
+# stack_cropped <- crop(snowstack, ext) will crop the whole stack 
+
+p1 <- ggplot() + 
+geom_raster(ssummer_cropped, mapping = aes(x=x, y=y, fill=Snow.Cover.Extent.1)) +
+scale_fill_viridis(option="viridis") +
+ggtitle("Snow cover during summer")
+ 
+p2 <- ggplot() + 
+geom_raster(swinter_cropped, mapping = aes(x=x, y=y, fill=Snow.Cover.Extent.2)) +
+scale_fill_viridis(option="viridis") +
+ggtitle("Snow cover during winter")
+ 
+p1 / p2
+
