@@ -34,33 +34,55 @@ plot (water, fishes, pch=15)  # turn the white circles into black squares
 plot (water, fishes, pch=15, col="blue", cex=3)
 
 
-#############################################################
-
-# The data we developed can be stored in a table
+# The data we developed can be stored in a very simple table that can be visualized directly in R
 # a table in R is called data frame
 
 streams <- data.frame(water, fishes)
+streams  # Now I can see the data of my table
 
-# From now on we are going to import or export data
+# If I want to see my table in another tab in R, I can use the View() function (with the initial in uppercase)
+# I just have to put the name of the data set and the name I want to give to my table
+View(streams, "my table")
+
+
+####
+
+
+# From now on, we are going to import and/or export data!
+
+# It is convenient to create a new folder, that I'll call lab, directly in the file system, that is (C:) in Windows
+# Mac and Linux users will have it different
+# I'll use the setwd() function, that means set working directory, to recall the the lab folder
+# I should quote the path, so I am safe with the document leaving R (with " ")
 setwd("C:/lab/")
 
-# Let's export our table
+# EXPORTING
+# Let's export the table I previously created using the function write.table()
+# after file=, I should put, under quotes, the name I want to give to my table, plus the extention
 write.table(streams, file="my_first_table.txt")
 
-# Some collegues did send us a table we should import to R
-
+# IMPORTING
+# Some collegues did send us a table. How to import it in R? Answer: by using the function read.table()
+# Since I take the table from outside R, I should protect it by using quotes
 read.table("my_first_table.txt")
-# Let's assign it to an object inside R
-chiaratable <- read.table("my_first_table.txt")
-chiaratable
 
-# The first statistics for lazy people
+# Let's assign the table to an object inside of R, so I can recall it anytime
+chiaratable <- read.table("my_first_table.txt")  # I created a new object
+chiaratable  # In R this is not called table, but data frame
+
+
+# Let's do my first statistics (for lazy people)
+
+# For example, I want to get all the information of my table, such as the minimum value, the maximum, the median, the mean, the 1st quartile and the 3rd quartile
 summary(chiaratable)
 
-# Marta doesn't like water
-# Marta wants info only on fishes
+# Marta doesn't like water, she wants info only on fishes
+# I can do the statistics only for one variable of the table
+# This is achieved by putting the $ symbol between the name of the table and the variable I'm interested in
 summary(chiaratable$fishes)
 
-#histogram
+# I can also visualize the variables as histograms by simply use the function hist()
+# The hist() function require a vector
+# The histogram will show the frequency of data by showing how many data exist for each interval
 hist(chiaratable$fishes)
 hist(chiaratable$water)
