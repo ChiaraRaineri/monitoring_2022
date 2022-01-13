@@ -1,11 +1,12 @@
 # R code for ecosystem monitoring by remote sensing
 # First of all, we need to install additional packages
-# raster package to manage image data
-# All'inizio del codice devi sempre mettere library(raster), setwd("C/lab/") e l2011 <- brick("p224r63_2011.grd")
+# The most useful is the raster package to manage image data
 
-install.packages("raster")
 
-library(raster)
+install.packages("raster")  # This is the way to download all the different packages (I am using the quotes since I am exiting R)
+
+# At the beginning of your code don't forget to put library(raster) and setwd("C/lab/") to set the working directory
+library(raster)  # This is something I have to write to recall the library
 
 setwd("C:/lab/")
 
