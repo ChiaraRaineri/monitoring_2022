@@ -5,33 +5,57 @@
 
 install.packages("raster")  # This is the way to download all the different packages (I am using the quotes since I am exiting R)
 
-# At the beginning of your code don't forget to put library(raster) and setwd("C/lab/") to set the working directory
+# At the beginning of your code don't forget to put library(raster)
 library(raster)  # This is something I have to write to recall the library
 
+
+# IMPORTING
+# We are going to import satellite data using the function brick(), that create a RasterBrick, that is the set of multiple bands together
+# The brick function can be compared with the read.table() function
+# For the brick function I need to install the raster package
+# Inside brick I should put the raster object I want to read (in this case it is the .grd files)
+# My objective will be to compare the 2011 image with the image from 1988
+
+# To use the function I need to set the working directory first
 setwd("C:/lab/")
 
-# We are going to import satellite data
-# l2011 is for the satellite landset
+# The l stands for Landsat
 # Objects cannot be numbers
 l2011 <- brick("p224r63_2011.grd")
-
 l2011
 
-# 1499, 2967, 4447533, 7  (nrow, ncol, ncell, nlayers)
-# 1499 and 2967 are the number of columns and lines, 4447533 is the number of pxels, 7 is the numbero of layers
+# After entering l2011 I have many informations
+# Class: in R objects have a class. In this case it is RasterBrick
+# Dimensions: the third value is the number of pixels in just one band. In this case I have 7 bands
+# Resolution: each pixels is 30 m x 30 m
+# Source: the data in my PC
+# Names: it is the names of the bands
+# min and max: the reflectance range from 0 to 1 (1 is the maximum reflectance in a certain place)
 
+
+# Let's plot all of the data set
 plot(l2011)
-# B1, B2... are the bands
+
+# The first three bands are the three visible channels: blue, green, red
 # B1 is the reflectance in the blue band
 # B2 is the reflectance in the green band
 # B3 is the reflectance in the red band
 
-cl <- colorRampPalette(c("black","grey","light grey"))(100)
+# The bands are seen in the default colors, let's change it
+# c("black", "grey", "light gray") is an array 
+# 100 indicates how many tones I want to have in my palette (there are 100 colors from black to light gray)
+cl <- colorRampPalette(c("black","grey","light grey"))(100)  
 plot(l2011, col=cl)
-# (black, grey, light gray) is an array
-# 100 indicates how many tones we want to have in our palette
 
-plotRGB(l2011, r=3, g=3, b=1, stretch="Lin")
+
+# RGB is the basic color scheme used in devices. I should march the bands B1, B2, B3 with the correspondent color
+# plotRGB() is a function in the raster package
+# Inside of that function I put the RasterBrick object, in r I put the band in the red channel, g is for the green channel and b is for the blue channel
+# In the stretch argument I state how I want to stretch the data to see the colors better
+plotRGB(l2011, r=3, g=2, b=1, stretch="Lin")  # This is a natural color image
+
+
+
 
 # ---------- day 2
 # B1 is the reflectance in the blue band
