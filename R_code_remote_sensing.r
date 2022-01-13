@@ -56,29 +56,42 @@ plotRGB(l2011, r=3, g=2, b=1, stretch="Lin")  # This is a natural color image
 
 
 
-
 # ---------- day 2
+
+
 # B1 is the reflectance in the blue band
 # B2 is the reflectance in the green band
 # B3 is the reflectance in the red band
 # B4 is the reflectance in the near infra-red band
 
-# Let's plot the green band
+# Let's plot every single band
+
+
+# Plot only the green band, that is B2
+# I can find the name of the band (B2_sre) by running l2011, under the section names
+# I am linking the band with the satellite image using the symbol $
 plot(l2011$B2_sre)
 
+# Let's change the color scheme with black, grey and light grey
+# Everything which is absorbing the green wavelenght is now black, while the higher reflectance is in the white part
 cl <- colorRampPalette(c("black","grey","light grey"))(100)
 plot(l2011$B2_sre, col=cl)
 
-# Change the colorRampPalette with dark green, green and light green
+# Now, let's change the colorRampPalette with dark green, green and light green
+# The dark green parts are not reflecting in the green band, while the light green parts are reflecting in the green band
 clg <- colorRampPalette(c("dark green","green","light green"))(100)
 plot(l2011$B2_sre, col=clg)
 
-# Do the same for the blue band, that is called B1_sre
+
+# Let's do the same for the blue band, that is called B1_sre
 clb <- colorRampPalette(c("dark blue","blue","light blue"))(100)
 plot(l2011$B1_sre, col=clb)
 
+
+# I want the two images i plotted to be one beside the other (I want to create a multiframe, mf)
+# This is achieved with the par() function, that can be used to make any changes in a graph
 # Plot both images in just one multiframe graph (1 row and 2 columns)
-par(mfrow=c(1,2))
+par(mfrow=c(1,2))  # Because it is mfrow, the first number in the parenthesis is the number of rows and the second one is the number of columns
 plot(l2011$B1_sre, col=clb)
 plot(l2011$B2_sre, col=clg)
 
@@ -88,7 +101,9 @@ plot(l2011$B1_sre, col=clb)
 plot(l2011$B2_sre, col=clg)
 
 
+
 # ---------- day 3
+
 
 # Plot the first four bands with 2 rows and 2 columns
 
