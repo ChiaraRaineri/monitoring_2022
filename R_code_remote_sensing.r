@@ -126,7 +126,7 @@ plot(l2011$B4_sre, col=clnir)
 # I can also plot the bands altogether using the RGB function (rather than doing single band plotting choosing a color)
 # Remember to recall the raster package
 
-# First, I should clean my window using the dev.off() function
+# First, I should clean my window using the dev.off() function (it is useful to remove the par function)
 dev.off()
 
 # In this function I have to put the satellite image (l2011) and then the different layers (red, green and blue channels with the corresponding band)
@@ -161,18 +161,35 @@ plotRGB(l2011, r=3, g=2, b=4, stretch="Lin")
 # ---------- day 4
 
 
-plotRGB(l2011, r=4, g=3, b=2, stretch="Lin")
-plotRGB(l2011, r=4, g=3, b=2, stretch="Hist")
+# Let's see how this landscape has changed from 1988 to 2011
 
-# Importing past data
+# Don't forget to set the working directory and to recall the raster library
+# library(raster)
+# setwd("C:/lab/")
+# l2011 <- brick("p224r63_2011.grd")
+
+## stretch function
+# The NIR band is now in the red channel, so I'll see the vegetation red
+plotRGB(l2011, r=4, g=3, b=2, stretch="Lin")  # What I used until now
+plotRGB(l2011, r=4, g=3, b=2, stretch="Hist")  # Histogram stretch, it enhances a lot the differences from one place to the other
+##
+
+
+# Now, let's import the data from 1988 using the brick() function
+# For this image I have also the different bands
 l1988 <- brick("p224r63_1988.grd")
+l1988
 
+# Let's compare the two different images of the same landscape by putting them one on top of the other in a multiframe
+# There are many differences between the two images, mainly due to the loss of vegetation in 2011 compared with 1988
 par(mfrow=c(2,1))
 plotRGB(l1988, r=4, g=3, b=2, stretch="Lin")
 plotRGB(l2011, r=4, g=3, b=2, stretch="Lin")
 
-# Put the NIR in the blue channel
-par(mfrow=c(2,1))
+# For exercising, let's put the NIR in the blue channel
 plotRGB(l1988, r=2, g=3, b=4, stretch="Lin")
 plotRGB(l2011, r=2, g=3, b=4, stretch="Lin")
 
+# And now in the green channel
+plotRGB(l1988, r=3, g=4, b=2, stretch="Lin")
+plotRGB(l2011, r=3, g=4, b=2, stretch="Lin")
