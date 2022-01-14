@@ -95,6 +95,7 @@ par(mfrow=c(1,2))  # Because it is mfrow, the first number in the parenthesis is
 plot(l2011$B1_sre, col=clb)
 plot(l2011$B2_sre, col=clg)
 
+# Now I want the two graphs to be one on top of the other
 # 2 rows and 1 column
 par(mfrow=c(2,1))
 plot(l2011$B1_sre, col=clb)
@@ -105,33 +106,45 @@ plot(l2011$B2_sre, col=clg)
 # ---------- day 3
 
 
-# Plot the first four bands with 2 rows and 2 columns
+# Let's now plot the first four bands with 2 rows and 2 columns
+# I start with building a multiframe
+par(mfrow=c(2,2))  # This function is important if I want to have all the graphs together in one tab. Now I need 2 rows and 2 columns
 
-par(mfrow=c(2,2))
+# Before plotting, let's assign each band a palette of colors
+clb <- colorRampPalette(c("dark blue","blue","light blue"))(100)  # Blue band
+clg <- colorRampPalette(c("dark green","green","light green"))(100)  # Green band
+clr <- colorRampPalette(c("dark red", "red", "pink"))(100)  # Red band ("light red" does not exist)
+clnir <- colorRampPalette(c("red", "orange", "yellow"))(100)  # Near Infra Red band (NIR). These colors are arbitrarily assigned by me
 
-clb <- colorRampPalette(c("dark blue","blue","light blue"))(100)
-
-clg <- colorRampPalette(c("dark green","green","light green"))(100)
-
-clr <- colorRampPalette(c("dark red", "red", "pink"))(100)
-
-clnir <- colorRampPalette(c("red", "orange", "yellow"))(100)
-
+# Now that I have a multiframe and a color for each one I can plot them using their names and the palette I chose
 plot(l2011$B1_sre, col=clb)
 plot(l2011$B2_sre, col=clg)
 plot(l2011$B3_sre, col=clr)
 plot(l2011$B4_sre, col=clnir)
 
-# Let's plot in RGB
+
+# I can also plot the bands altogether using the RGB function (rather than doing single band plotting choosing a color)
+# Remember to recall the raster package
+
+# First, I should clean my window using the dev.off() function
 dev.off()
 
-plotRGB(l2011, r=3, g=2, b=1, stretch="Lin")   # natural colors
+# In this function I have to put the satellite image (l2011) and then the different layers (red, green and blue channels with the corresponding band)
+# I want also to stretch the values to see the colors better (in this case I am using a linear stretch)
+plotRGB(l2011, r=3, g=2, b=1, stretch="Lin")   # This is the satellite image with its natural colors, as I am using the bands of the visible spectrum
 
-# Now let's see the NIR, shifting from B1, B2, B3 to B2, B3, B4 and other combinations
-plotRGB(l2011, r=4, g=3, b=2, stretch="Lin")   # false colors
-plotRGB(l2011, r=3, g=4, b=2, stretch="Lin")   # false colors
-plotRGB(l2011, r=3, g=2, b=4, stretch="Lin")   # false colors
+# Now I want to extend my view to the near infra red
+# I can do so by shifting from B1, B2, B3 to B2, B3, B4 and any other combinations
+plotRGB(l2011, r=4, g=3, b=2, stretch="Lin")   
+# Since vegetation is reflecting a lot in the NIR, the new color of vegetation in the image would be red
+# This happend because I am putting the NIR component in the red channel
+# So, everything that reflect a lot of NIR will become red
 
+# I can put the NIR band in any other channel and see even more things
+plotRGB(l2011, r=3, g=4, b=2, stretch="Lin")   # false colors, I can see the changes in humidity inside the vegetation
+plotRGB(l2011, r=3, g=2, b=4, stretch="Lin")   # false colors, I can see better the amount of forest which has been cut (bare soil)
+
+# Let's do a multiframe with these images
 par(mfrow=c(2,2))
 plotRGB(l2011, r=3, g=2, b=1, stretch="Lin")
 plotRGB(l2011, r=4, g=3, b=2, stretch="Lin")
@@ -139,7 +152,14 @@ plotRGB(l2011, r=3, g=4, b=2, stretch="Lin")
 plotRGB(l2011, r=3, g=2, b=4, stretch="Lin")
 
 
-# Final day on this tropical forest reserve
+# The first step in monitoring ecosystems is to do an exploratory analysis to see its current situation
+# Then, I have to do a multi-temporal analysis, in which I can see the changes that occur from a previous date until now
+# I have the data of the same area in 1988
+
+
+
+# ---------- day 4
+
 
 plotRGB(l2011, r=4, g=3, b=2, stretch="Lin")
 plotRGB(l2011, r=4, g=3, b=2, stretch="Hist")
