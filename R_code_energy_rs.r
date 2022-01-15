@@ -36,59 +36,87 @@ plotRGB(l1992, r=1, g=2, b=3, stretch="Lin")
 # ---------- day 2
 
 
+# Let's import the second image using the brick() function. 
+# These data are from the same area, but in 2006
 l2006 <- brick("defor2_.jpg")
+l2006
 
-# Water become black when there is a complete absorption (pure water) because water absorb all the NIR
-# When water is white it means that there is suspended soil in it
+# In the image there are 3 bands: defor2_.1, defor2_.2, defor2_.3
 
-plotRGB(l2006, r=1, g=2, b=3, stretch="Lin")
+# Now, let's make an RGB plot of the new image
+plotRGB(l2006, r=1, g=2, b=3, stretch="Lin")  # Like before, the NIR band is in the r channel, so it is defor2_.1
 
+
+# Let's plot the two images together, one on top of the other (2 rows, 1 column)
 par(mfrow=c(2,1))
 plotRGB(l1992, r=1, g=2, b=3, stretch="Lin")
 plotRGB(l2006, r=1, g=2, b=3, stretch="Lin")
 
-# DVI is Different Vegetation Index
-# it is calculated by the reflectance in the NIR (higher value) minus the reflectance in the red (lower value, because there is more absorption)
-# DVI is equal to create a new layer (NIR-red)
 
-# Let's calculate energy in 1992
-# If there are other plottings I have to use dev.off()
-dvi1992 <- l1992$defor1_.1 - l1992$defor1_.2
-cl <- colorRampPalette(c("darkblue", "yellow", "red", "black"))(100)
-plot(dvi1992, col=cl)
+# Let's now calculate energy
+# DVI = Difference Vegetation Index
+# This index is calculated by the reflectance in the NIR (higher value) minus the reflectance in the red 
+# For high reflectance in the NIR it means the vegetation is healty, the lower reflectance in red happens because vegetation absorb red wave lenght for photosynthesis
+# DVI is equal to create a new layer (NIR-red) obtained by subtracting the red band to the NIR band
 
-# Let's calculate energy in 2006
+
+# Calculating energy in 1992
+# I have to look at the bands' names to do the operation, so I'll run l1992
+# Then I have to link together the image with the NIR and red layers by using $
+dvi1992 <- l1992$defor1_.1 - l1992$defor1_.2   # dvi1992 is assigned to an algebra operation. For every pixel in the image there will be an operation
+
+# Before plotting, let's create a ramp palette
+cl <- colorRampPalette(c("darkblue", "yellow", "red", "black"))(100)  # Dark blue is the smallest value and black is the highest value
+# To remove the par() function I have to use dev.off() before plotting
+dev.off()
+plot(dvi1992, col=cl) 
+
+
+# Calculating energy in 2006
 dvi2006 <- l2006$defor2_.1 - l2006$defor2_.2
 
+
+# Let's plot the two images together, one on top of the other (2 rows, 1 column)
 par(mfrow=c(2,1))
 plot(dvi2006, col=cl)
 plot(dvi1992, col=cl)
 
-# The yellow parts indicate the spots in which energy is lost
+# The yellow parts indicate the spots in which energy is lost (the energy has been removed from the system), that is where vegetation was cut off
+# The use of yellow is not accidental, as it is the color that immediately catch the eye (I use it to stress a key concept)
 
-# Differencing two images of energy in two different times
+
+# Differencing two images of energy in two different times (let's calculate the difference between 1992's DVI and 2006's DVI)
 dvidif <- dvi1992 - dvi2006
-cld <- colorRampPalette(c("blue", "white", "red"))(100)
+
+cld <- colorRampPalette(c("blue", "white", "red"))(100)  # Using a new ramp palette
 plot(dvidif, col=cld)
 
-# Final plot: original images, dvis, dvi difference
-par(mfrow=c(3,2))
+# The red areas have a high value of difference, so they represent the parts in which energy has been completely lost
+# These are the areas that turned from an high value of DVI in 1992 to a low value in 2006
+
+
+# Let's make a final plot of this area with: original images, DVIs and the final DVI difference
+par(mfrow=c(3,2))  # I need three rows and two columns
 plotRGB(l1992, r=1, g=2, b=3, stretch="Lin")
 plotRGB(l2006, r=1, g=2, b=3, stretch="Lin")
 plot(dvi1992, col=cl)
 plot(dvi2006, col=cl)
 plot(dvidif, col=cld)
+
 
 # The function pdf() stores the plot in a pdf
-pdf("energy.pdf")
+# I can find the pdf file in the lab folder
+pdf("energy.pdf")  # I should assign a name to my pdf
 par(mfrow=c(3,2))
 plotRGB(l1992, r=1, g=2, b=3, stretch="Lin")
 plotRGB(l2006, r=1, g=2, b=3, stretch="Lin")
 plot(dvi1992, col=cl)
 plot(dvi2006, col=cl)
 plot(dvidif, col=cld)
-dev.off()
+dev.off()  # By this function I am closing the pdf file
 
+
+# Just putting in a pdf the DVI plots, all one on top of the other (3 rows and 1 column)
 pdf("dvi.pdf")
 par(mfrow=c(3,1))
 plot(dvi1992, col=cl)
