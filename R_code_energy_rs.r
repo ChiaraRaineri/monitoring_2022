@@ -1,7 +1,10 @@
 # R code for estimating energy in ecosystems
+# How much energy is available for other organisms
 
+# As I learned in the last lessons, first of all I need to recall the library raster, that allows me to see satellite images
+# install.packages("raster")
 library(raster)
-
+# Then, another thing I can't forget is to set the working directory, in this case the lab folder
 setwd("C:/lab/")
 
 # To see the .jpg image we have to install another package
