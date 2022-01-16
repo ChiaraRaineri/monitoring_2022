@@ -78,16 +78,18 @@ plot(EN, col=cl)
 # First, I should check the original name inside the stack (type EN)
 plot(EN$EN_0001, col=cl)  # I have to link the image to the stack by using $
 
-# Let's plot an RGB space
-# In red we put the first image, in g the 7th and in b the 13th
-plotRGB(EN, r=1, g=7, b=13, stretch="lin")
+
+# Let's plot an RGB space with the images inside
+# I want to plot, in just one image, three different layers in time
+# In the red component I put the first image, in the green the 7th and in the blue the 13th
+plotRGB(EN, r=1, g=7, b=13, stretch="lin")  
+# Red areas are the ones with more NO2 pollution in January, the green areas have the highest NO2 in the mid-term, and blue areas in March
+# The yellow parts are those in which NO2 concentration remains constantly high
 
 
 
-# Day 2
+# ---------- day 2
 
-library(raster)
-setwd("C:/lab/en")
 
 # Importing all the data together with the lapply function
 # Writing "EN" means list all the files with the same name, i.e. EN
