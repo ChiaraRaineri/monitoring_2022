@@ -91,28 +91,49 @@ plotRGB(EN, r=1, g=7, b=13, stretch="lin")
 # ---------- day 2
 
 
-# Importing all the data together with the lapply function
-# Writing "EN" means list all the files with the same name, i.e. EN
-rlist <- list.files(pattern="EN")
-rlist
+# I want to import the data altogether, without writing them one by one
+# To do this, I have to use the lapply() function
+# lapply function will apply another function to a list of files
 
+# First, I should make the list using the function list.files(), stating the images I want to import directly
+# I can use a common pattern for all the images 
+# In this case all the images have "EN" in their names
+# Don't forget to set the working directory
+rlist <- list.files(pattern="EN")  
+rlist  # Now I can see a list with the original names of the images (with EN as the common pattern)
+
+# Now, I can use the lapply function
+# The second element is the function I want to apply on the list, in this case it's the raster function
 list_rast <- lapply(rlist, raster)
-list_rast
+list_rast  # Now I can see all the files that has been imported one after the other
 
+# I want to make use of the files altogether, so I have to build a stack
 EN_stack <- stack(list_rast)
 EN_stack
 
-cl <- colorRampPalette(c('red','orange','yellow'))(100)
+
+# Let's use the stack to plot everything altogether
+cl <- colorRampPalette(c('red','orange','yellow'))(100)  
 plot(EN_stack, col=cl)
 
-# Plot only the first image of the stack
+# I have the same results as the previous lesson, but this is the best way to obtain them
+
+# Plotting only the first image of the stack
 plot(EN_stack$EN_0001, col=cl)
 
-# Difference between the first picure and the thirteen one
+
+# Differences between the first image and the thirteenth one
+# With high values, there has been a high decrease, a higher change in time
+# The red parts are those where the change is higher
 ENdif <- EN_stack$EN_0001 - EN_stack$EN_0013
 cldif <- colorRampPalette(c('blue','white','red'))(100)
 plot(ENdif, col=cldif)
 
-# Let's use the automated processing source function
-# It is used to avoid copy pasting the code on an external file (like a shared one)
+
+
+# How to use a code created by others without copy-pasting with a function that can run the script directly
+# Let's use the automated processing source function 
+# Let's make an example with a txt file
 source("R_code_automatic_script.txt")
+
+# For Window user: never code directly in Word or other things from Office
