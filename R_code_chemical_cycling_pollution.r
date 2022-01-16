@@ -64,15 +64,19 @@ plot(en11, col=cl)
 plot(en12, col=cl)
 plot(en13, col=cl)
 
-# To avoid doing it manually using the function stack
-EN <- stack(en01, en02, en03, en04, en05, en06, en07, en08, en09, en10, en11, en12, en13)
 
-# Plot the stack altogether
+# To avoid doing this manually, I should build a stack
+# I am putting all my files in a RasterStack (this is how a satellite image is built)
+EN <- stack(en01, en02, en03, en04, en05, en06, en07, en08, en09, en10, en11, en12, en13)  # I have to put all the images altogether in the stack() function
+
+# Ploting the stack altogether
+# I don't need par()
 plot(EN, col=cl)
 
-# Plot only the first image of the stack
-# Check the name inside the stack (type EN)
-plot(EN$EN_0001, col=cl)
+
+# Plotting only the first image of the stack
+# First, I should check the original name inside the stack (type EN)
+plot(EN$EN_0001, col=cl)  # I have to link the image to the stack by using $
 
 # Let's plot an RGB space
 # In red we put the first image, in g the 7th and in b the 13th
