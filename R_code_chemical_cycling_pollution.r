@@ -1,28 +1,41 @@
 # R code for chemical cycling study
-# Time series of NO2 change in Europe during the lockdown
+# Time series of NO2 changes in Europe during the lockdown (I want to see if there were changes in NO2 during the lockdown)
+# Importing the data from January to March 2020
+# I'll use sentinel data that have already been analyzed
 
-library(raster)
-setwd("C:/lab/en")
 
-# This function is for importing data
-# The range of these data is from 0 to 255 (you can see it doing en01 and see values), i.e. 8 bits
-en01 <- raster("EN_0001.png")
+library(raster)  # Recalling the raster package
+setwd("C:/lab/en")  # Setting the working directory. This time I created a new folder inside lab so I can import the data altogether
 
-cl <- colorRampPalette(c("red", "orange", "yellow"))(100)
 
-# Plot the No2 values of January 2020 by the cl palette
+# Importing data
+# I could use the brick function, but that was useful for importing one image with different layers
+# Now that I have several files with just one layer, I'd better use the raster() function, which import every layer one after the other
+# The raster function create a RasterLayer object
+# To use this function I need the raster library
+en01 <- raster("EN_0001.png")  # Now, I have imported just the first image
+en01
+# The range of these data (min and max values) is from 0 to 255, i.e. 8 bits (2^8) 
+# this is a very common range. It is called 8 bit file
+
+# Let's plot this image
+cl <- colorRampPalette(c("red", "orange", "yellow"))(100)  # The maximum pollution is in yellow (it is the color that catches the eye more)
 plot(en01, col=cl)
 
-# Import the end of March NO2 and plot it
+
+# Let's import and plot the last image, that is at the end of March 2020
 en13 <- raster("EN_0013.png")
 plot(en13, col=cl)
 
-# Build a multiframe window with 2 rows and 1 column with par function
+
+# Building a multiframe window for the two images with 2 rows and 1 column
+# I should use the par() function
 par(mfrow=c(2,1))
 plot(en01, col=cl)
 plot(en13, col=cl)
 
-# Import all the images manually
+
+# Importing all the images manually (this is long and boring!)
 en02 <- raster("EN_0002.png")
 en03 <- raster("EN_0003.png")
 en04 <- raster("EN_0004.png")
@@ -35,7 +48,7 @@ en10 <- raster("EN_0010.png")
 en11 <- raster("EN_0011.png")
 en12 <- raster("EN_0012.png")
 
-# Plot all the data together
+# Plot all the data together (also long and boring!)
 par(mfrow=c(4,4))
 plot(en01, col=cl)
 plot(en02, col=cl)
