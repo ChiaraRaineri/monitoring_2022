@@ -46,33 +46,42 @@ l2006 <- list_rast[[2]]
 # Let's estimate the changes in time in termn of the amount of forest which have been lost (from 1992 to 2006)
 # How to explain to the software what pixels represent the forest?
 # I have to use a remote sensing technique called classification. I can classify the image creating a new image with forest and agriculture areas
-# 
-# Unsupervised classification
+# Unsupervised classification: it means that I am stating to the software the amount of classes I want in the end
 # This is the time to use the library RStoolbox
+
+# Let's classify the 1992 image first
 l1992c <- unsuperClass(l1992, nClasses=2)
+l1992c  
+# This object has many things inside, in this case there is only the map
+# I have the dimension of the map (number of pixels)
+# The minimum value correspond to class number 1 and the maximum with class number 2. One of them is forest and the other is agriculture
 
+# Let's make a plot of the map
 plot(l1992c$map)
-# Value 1 = agricultural areas and water
-# Value 2 = forests
+# In this case class 1 is white, that is agricultural areas and water, and class 2 is green, that is forest
+# In some cases the two color may be inverted
+# The values are only 1 or 2
 
+# Let's see the frequencies of the pixels (how many pixels inside the map are forest or agriculture areas)
 freq(l1992c$map)
 # Agricultural areas and water (class 1) = 33914 pixels
 # Forests (class 2) = 307378 pixels
 
 # Calculating the proportions of the two areas
-total <- 341292  # total pixels
+total <- 341292  # Total amount of pixels
 propagri <- 33914 / total  # 0.09936945 - 10%
 propforest <- 307378 / total  # 0.9006305 - 90%
 
-# Building a dataframe
-cover <- c("Forest", "Agriculture")
-prop1992 <- c(0.9006305, 0.09936945)
+# Building a dataframe in order to plot
+cover <- c("Forest", "Agriculture")  # This is the column for the land cover
+prop1992 <- c(propforest, propagri)  # This is the column for the proportion
 proportion1992 <- data.frame(cover, prop1992)
+proportion1992  # These are the real proportion of forest and agriculture
 
-# library(ggplot2)
-
-# Using ggplot function, aes is aesthetics 
-# geom_bar is for bar charts
+# Let's use the library ggplot2 to do a nice graph
+# I'll use the ggplot() function
+# aes() indicates the elements that are coloring the graph
+# geom_bar() is used for creating bar charts (type of graph). Identity means I am using the values as they are. The fill is the color inside the bars
 ggplot(proportion1992, aes(x=cover, y=prop1992, color=cover)) + geom_bar(stat="identity", fill="white")
 
 
