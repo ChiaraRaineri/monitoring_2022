@@ -86,44 +86,8 @@ ggplot(proportion1992, aes(x=cover, y=prop1992, color=cover)) + geom_bar(stat="i
 
 
 
-# ---------- day 2  (it's the same lesson as before)
-
-library(raster)
-library(RStoolbox)
-library(ggplot2)
-library(gridExtra)
-
-setwd("C:/lab/")
-
-rlist <- list.files(pattern="defor")
-rlist
-
-list_rast <- lapply(rlist, brick)
-list_rast
-
-l1992 <- list_rast[[1]]
-l2006 <- list_rast[[2]]
-
-plotRGB(l1992, r=1, g=2, b=3, stretch="lin")
-plotRGB(l2006, r=1, g=2, b=3, stretch="lin")
-
-l1992c <- unsuperClass(l1992, nClasses=2)
-l1992c
-
-plot(l1992c$map)
-freq(l1992c$map)
-
-total <- 34944 + 306348
-propagri <- 306348 / total 
-propforest <- 34944 / total 
-# [1,] forest
-# [2,] agriculture
-
-cover <- c("Forest", "Agriculture")
-prop1992 <- c(propforest, propagri)
-proportion1992 <- data.frame(cover, prop1992)
-
-#### 
+# ---------- day 2
+ 
 
 l2006c <- unsuperClass(l2006, nClasses=2)
 l2006c
@@ -184,10 +148,4 @@ gp1 <- ggRGB(l1992, r=1, g=2, b=3)
 gp5 <- ggRGB(l2006, r=1, g=2, b=3)
 gp1 + gp5
 gp1 / gp5
-
-
-
-
-
-
 
