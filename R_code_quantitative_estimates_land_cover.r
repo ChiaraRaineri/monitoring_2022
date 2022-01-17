@@ -1,25 +1,54 @@
+# Let's calculate the AMOUNT of forest loss in the two images I previously used, defor1_ and defor2_
+# Land cover means the cover of different land use types over the planet (e.g. the cover by forests, the cover by agriculture...)
+
+# I have to install the RStoolbox package for quantitative estimates
+install.packages("RStoolbox")
+# And also the ggplot2 package to make beautiful graphs
+install.packages("ggplot2")
+# Another one is the gridExtra package to build multiframes with different graphs from ggplot2
+install.packages("gridExtra")
+
 library(raster)
-setwd("C:/lab/")
+library(RStoolbox)
+library(ggplot2)
+library(gridExtra)
 
-# Importing the data
+setwd("C:/lab/")  # I have to brick the files defor1_ and defor2_ that are already in the lab folder
 
-# First list the files available
+
+# Importing the data using the lapply function
+# First, let's make a list with the files available and with a common pattern (in this case it's defor)
 rlist <- list.files(pattern = "defor")
+rlist
 
-# Then lapply: apply a function to a list
+# With lapply function, I am applying the function brick to the whole list
+# I am using the brick function because I have images with more layers
 list_rast <- lapply(rlist, brick)
+list_rast  # The first object is list_rast[[1]] and the second is list_rast[[2]]
 
+# I don't need the $ symbol, the double square parenthesis are enough
 plot(list_rast[[1]])
+plot(list_rast[[2]])
 
-# defor NIR 1, red 2, green 3
+# I am not making a stack this time because I have two different images I want to analyze separately
+
+
+# Let's plot the images in RGB
+# The NIR is in the 1st band, the red in the 2nd, and the green in the 3rd band
 plotRGB(list_rast[[1]], r=1, g=2, b=3, stretch="lin")
+plotRGB(list_rast[[2]], r=1, g=2, b=3, stretch="lin")
 
-# To avoid to write always list_rast[[1]]
+# To avoid always writing list_rast[[1]] and list_rast[[2]] let's assign an object to them
 l1992 <- list_rast[[1]]
 l2006 <- list_rast[[2]]
 
+
+# Let's estimate the changes in time in termn of the amount of forest which have been lost (from 1992 to 2006)
+# How to explain to the software what pixels represent the forest?
+# I have to use a remote sensing technique called classification. I can classify the image creating a new image with forest and agriculture areas
+# 
 # Unsupervised classification
-library(RStoolbox)
+# This is the time to use the library RStoolbox
 l1992c <- unsuperClass(l1992, nClasses=2)
 
 plot(l1992c$map)
@@ -40,14 +69,15 @@ cover <- c("Forest", "Agriculture")
 prop1992 <- c(0.9006305, 0.09936945)
 proportion1992 <- data.frame(cover, prop1992)
 
-library(ggplot2)
+# library(ggplot2)
 
 # Using ggplot function, aes is aesthetics 
 # geom_bar is for bar charts
 ggplot(proportion1992, aes(x=cover, y=prop1992, color=cover)) + geom_bar(stat="identity", fill="white")
 
 
-# Day 2 (it's the same lesson as before)
+
+# ---------- day 2  (it's the same lesson as before)
 
 library(raster)
 library(RStoolbox)
@@ -113,7 +143,8 @@ proportion
 grid.arrange(p1, p2, nrow=1)
 
 
-# Day 3
+
+# ---------- day 3
 
 install.packages("patchwork")
 library(patchwork)
