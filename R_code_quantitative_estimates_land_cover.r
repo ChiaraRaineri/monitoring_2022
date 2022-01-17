@@ -89,35 +89,48 @@ ggplot(proportion1992, aes(x=cover, y=prop1992, color=cover)) + geom_bar(stat="i
 # ---------- day 2
  
 
+# Now, I can classify the 2006 image
+# Unsupervised classification
 l2006c <- unsuperClass(l2006, nClasses=2)
 l2006c
 
+# Let's do the same operations as before, so plotting the map and see the frequencies of the pixels
 plot(l2006c$map)
+# In this case the forest is also value 1 and the agriculture the value 2
 freq(l2006c$map)
+# Agricultural areas and water (class 1) = 163391 pixels
+# Forests (class 2) = 179335 pixels
 
-total2006 <- 179335 + 163391
-propagri2006 <- 163391 / total2006
-propforest2006 <- 179335 / total2006 
-# [1,] forest
-# [2,] agriculture
+total2006 <- 179335 + 163391  # The total it's just a little different than the image before
+propagri2006 <- 163391 / total2006  # 0,4767394 - 48%
+propforest2006 <- 179335 / total2006  # 0,5232605 - 52%
+# Notice that the percentages are dramatically different as before
 
+# Let's build a data frame
 cover <- c("Forest", "Agriculture")
 prop2006 <- c(propforest2006, propagri2006)
-
 proportion2006 <- data.frame(cover, prop2006)
+proportion2006
 
-# Plotting altogether
-
-p1 <- ggplot(proportion1992, aes(x=cover, y=prop1992, color=cover)) + geom_bar(stat="identity", fill="white") + ylim(0,1)
-p2 <- ggplot(proportion2006, aes(x=cover, y=prop2006, color=cover)) + geom_bar(stat="identity", fill="white") + ylim(0,1)
-
+# Just to have both of the data frames together I do another data frame
 proportion <- data.frame(cover, prop1992, prop2006)
 proportion
-grid.arrange(p1, p2, nrow=1)
+
+# Now, let's plot the data by making two ggplot bar charts
+# ylim(0,1) is used to change the limit of the graph in the y axis (from 0 to 1)
+p1 <- ggplot(proportion1992, aes(x=cover, y=prop1992, color=cover)) + geom_bar(stat="identity", fill="white") + ylim(0,1)  
+p2 <- ggplot(proportion2006, aes(x=cover, y=prop2006, color=cover)) + geom_bar(stat="identity", fill="white") + ylim(0,1)
+
+
+# Let's plot the two graphs one beside the other
+# This require the use of the package gridExtra
+# The grid.arrange() function put several ggplot graphs in the same multiframe
+grid.arrange(p1, p2, nrow=1)  # 1 row
 
 
 
 # ---------- day 3
+
 
 install.packages("patchwork")
 library(patchwork)
