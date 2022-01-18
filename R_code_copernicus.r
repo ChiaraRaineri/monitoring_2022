@@ -1,15 +1,25 @@
 # R code for uploading and visualizing Copernicus data in R
 # https://land.copernicus.vgt.vito.be/PDF/portal/Application.html
 
-library(ncdf4)
+# First, I should install the ncdf4 package
+install.packages("ncdf4")
+
 library(raster)
-setwd("C:/lab/copernicus")
+library(ncdf4)
+
+setwd("C:/lab/copernicus")  # I created a new folder in the lab folder called copernicus
 
 # To see how many layers are in the Copernicus data
+# I can use the raster function because the data are single-layer
+# The name of the object refers to the date of the data, so the 14th of December 2021
 snow20211214 <- raster("c_gls_SCE_202112140000_NHEMI_VIIRS_V1.0.1.nc")
 snow20211214
 
+# Let's plot the data directly
 plot(snow20211214)
+
+
+
 
 cl <- colorRampPalette(c("dark blue","blue","light blue"))(100)
 plot(snow20211214, col=cl)
