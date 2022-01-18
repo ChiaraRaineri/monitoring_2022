@@ -132,33 +132,34 @@ grid.arrange(p1, p2, nrow=1)  # 1 row
 # ---------- day 3
 
 
-install.packages("patchwork")
+install.packages("patchwork")  # With this package I can plot multiple graphs, just like I did before with gridExtra package
 library(patchwork)
 
-# With this package we can plot multiple graphs, just like we did before
-
+# For example
 p1 + p2   # The graphs are one beside the other
-p1/p2   # The graphs are one on top of the other
+p1 / p2   # The graphs are one on top of the other
 
-# This package work also with images (raster data), but we need to have ggplot2
+# This package work also with images (raster data), but I they should be plotted with the ggplot2 package
 
-# Instead of using plotRGB we are going to use ggRGB
-plotRGB(l1992, r=1, g=2, b=3, stretch="Lin")
 
+plotRGB(l1992, r=1, g=2, b=3, stretch="lin")
+# Instead of using plotRGB, I am using ggRGB, which creates a ggplot2 plot
+# it can be used with the patchwork package, as it works only with ggplot2 plots
+# This function requires the RStoolbox package
 ggRGB(l1992, r=1, g=2, b=3, stretch="lin")
-ggRGB(l1992, r=1, g=2, b=3, stretch="hist")
-ggRGB(l1992, r=1, g=2, b=3, stretch="sqrt")
+ggRGB(l1992, r=1, g=2, b=3, stretch="hist")  # This stretch shows additional characteristics from the image
+ggRGB(l1992, r=1, g=2, b=3, stretch="sqrt")  # This stretch will compact the data
 ggRGB(l1992, r=1, g=2, b=3, stretch="log")   # In R log is natural log
 
+# Let's assign every graph to an object so I can use the patchwork
 gp1 <- ggRGB(l1992, r=1, g=2, b=3, stretch="lin")
 gp2 <- ggRGB(l1992, r=1, g=2, b=3, stretch="hist")
 gp3 <- ggRGB(l1992, r=1, g=2, b=3, stretch="sqrt")
 gp4 <- ggRGB(l1992, r=1, g=2, b=3, stretch="log")
-gp1 + gp2 + gp3 + gp4
+gp1 + gp2 + gp3 + gp4  # All the graphs are one beside the other
 
-# Multitemporal patchwork
+# Multitemporal patchwork (plot the 1992 and the 2006 images)
 gp1 <- ggRGB(l1992, r=1, g=2, b=3)
 gp5 <- ggRGB(l2006, r=1, g=2, b=3)
-gp1 + gp5
-gp1 / gp5
-
+gp1 + gp5  # One beside the other
+gp1 / gp5  # One on top of the other
