@@ -43,6 +43,7 @@ library(viridis)
 
 library(RStoolbox)
 library(ggplot2)
+library(patchwork)
 
 
 # Let's make a ggplot
@@ -70,63 +71,70 @@ ggtitle("cividis palette")
 
 # Now, I'll download another image from the same set (29th of August)
 
-
-rlist <- list.files(pattern="SCE")
+# Let's import a set of data with the lapply function
+rlist <- list.files(pattern="SCE")  # SCE means Snow Cover Extent
 rlist
-
-list_rast <- lapply(rlist, raster)
+list_rast <- lapply(rlist, raster)  # raster function for single layers
 list_rast
-
-snowstack <- stack(list_rast)
+snowstack <- stack(list_rast)  # I created a stack
 snowstack
 
+# Let's assign a name for every element of the stack
+# I am doing this just because I have only two files
 ssummer <- snowstack$Snow.Cover.Extent.1
 swinter <- snowstack$Snow.Cover.Extent.2
 
+
+# Now, I am making use to the patchwork package and the viridis package
 ggplot() +
 geom_raster(ssummer, mapping = aes(x=x, y=y, fill=Snow.Cover.Extent.1)) +
 scale_fill_viridis(option="viridis") +
-ggtitle("Snow cover during my birthday!")
+ggtitle("Snow cover during summer")
 
 ggplot() +
 geom_raster(swinter, mapping = aes(x=x, y=y, fill=Snow.Cover.Extent.2)) +
 scale_fill_viridis(option="viridis") +
-ggtitle("Snow cover during freezing winter!")
+ggtitle("Snow cover during winter")
+
 
 # Let's patchwork them together
-library(patchwork)
-
 p1 <- ggplot() + 
 geom_raster(ssummer, mapping = aes(x=x, y=y, fill=Snow.Cover.Extent.1)) +
-scale_fill_viridis(option="viridis") +
+scale_fill_viridis() +
 ggtitle("Snow cover during summer")
  
 p2 <- ggplot() + 
 geom_raster(swinter, mapping = aes(x=x, y=y, fill=Snow.Cover.Extent.2)) +
-scale_fill_viridis(option="viridis") +
+scale_fill_viridis() +
 ggtitle("Snow cover during winter")
  
-p1 / p2
+p1 / p2  # One on top of the other
 
-# Crop a image on a certain area
+
+# How to crop an image on a certain area: using coordinates
+# I want to zoom in Italy
 # Longitude from 0 to 20
 # Latitude from 30 to 50
 
-ext <- c(0, 20, 30, 50)
+# First, I should put the extension I want to crop
+ext <- c(0, 20, 30, 50)  # The first two numbers are longitude and the next numbers are latitude
+# Then, I'll use the crop() function
 ssummer_cropped <- crop(ssummer, ext)
 swinter_cropped <- crop(swinter, ext)
 
-# stack_cropped <- crop(snowstack, ext) will crop the whole stack 
+# stack_cropped <- crop(snowstack, ext)  # This will crop the whole stack, and then single variables (layers) can be extracted
 
+
+# Let's plot the cropped images
 p1 <- ggplot() + 
 geom_raster(ssummer_cropped, mapping = aes(x=x, y=y, fill=Snow.Cover.Extent.1)) +
-scale_fill_viridis(option="viridis") +
-ggtitle("Snow cover during summer")
+scale_fill_viridis() +
+ggtitle("Snow cover during summer in Italy")
  
 p2 <- ggplot() + 
 geom_raster(swinter_cropped, mapping = aes(x=x, y=y, fill=Snow.Cover.Extent.2)) +
-scale_fill_viridis(option="viridis") +
-ggtitle("Snow cover during winter")
+scale_fill_viridis() +
+ggtitle("Snow cover during winter in Italy")
  
 p1 / p2
 
