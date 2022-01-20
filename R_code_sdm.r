@@ -43,6 +43,37 @@ points(absences, pch=19, col="red")
 
 # Now, I want to calculate the probability of finding a species in a certain part of the map
 # I can use many variables, called predictors, such as temperature, elevation, water availability...
+# Let's look at the predictors
+path <- system.file("external", package="sdm")
+path  # This is the folder in which all the data are stored
+# All the predictors in this folder have the same extension, that is .asc (for ascii)
+# In this case the predictors are elevation, precipitation, temperature and vegetation
+# Let's make a list with the files
+lst <- list.files(path, pattern="asc", full.names=TRUE)  # The last part is mandatory because R cannot read the extension
+lst  # It shows the files
+
+# Now, let's put the files together in a stack
+# I can use the lapply function with the raster function, but in this case it is not needed since the data are inside the package and they have asc extension
+preds <- stack(lst)
+
+# Let's plot the predictors
+cl <- colorRampPalette(c("blue", "orange", "red", "yellow"))(100)
+plot(preds, col=cl)
+
+# Let's plot the presences on top of the elevation predictor
+plot(preds$elevation, col=cl)
+points(presences, pch=19)
+
+plot(preds$temperature, col=cl)
+points(presences, pch=19)
+
+plot(preds$precipitation, col=cl)
+points(presences, pch=19)
+
+
+# Now, let's make a model
+
+
 
 
 
