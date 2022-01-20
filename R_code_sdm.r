@@ -78,8 +78,15 @@ datasdm <- sdmData(train=species, predictors=preds)
 datasdm  # There is one species, the name of the column is Occurrence, there are 4 predictors (features)
 
 # For the model I am using the sdm() function
-# The formula refers to y = bx + a. The y axis is Occurrence. Equal in R is ~ 
-sdm(Occurrence ~ temperature)
+# The formula refers to y = bx + a. The y axis is Occurrence and the x axis is the prediction. Equal in R is ~ 
+# The data are in datasdm
+# There are many methods, one of them is the linear model (generalized linear model)
+sdm(Occurrence ~ temperature, data=datasdm, methods="glm")
+# I can also add other predictions to my model
+m1 <- sdm(Occurrence ~ temperature + elevation + precipitation + vegetation, data=datasdm, methods="glm")
+m1  # This is the model I can use to make predictions
+
+# Now, let's make the prediction
 
 
 
