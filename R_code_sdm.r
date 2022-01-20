@@ -72,6 +72,14 @@ points(presences, pch=19)
 
 
 # Now, let's make a model
+# The species data are also called training data (I am training the model explaining where the species is or is not)
+# I am making use of the sdm package
+datasdm <- sdmData(train=species, predictors=preds)
+datasdm  # There is one species, the name of the column is Occurrence, there are 4 predictors (features)
+
+# For the model I am using the sdm() function
+# The formula refers to y = bx + a. The y axis is Occurrence. Equal in R is ~ 
+sdm(Occurrence ~ temperature)
 
 
 
