@@ -86,9 +86,23 @@ sdm(Occurrence ~ temperature, data=datasdm, methods="glm")
 m1 <- sdm(Occurrence ~ temperature + elevation + precipitation + vegetation, data=datasdm, methods="glm")
 m1  # This is the model I can use to make predictions
 
+
 # Now, let's make the prediction
+# I'll use the predict() function, that can be used for every model
+# newdata refers to my data, which are the predictors
+p1 <- predict(m1, newdata=preds)
+p1  # In blue are the areas with a low probability to find species
+
+# Let's plot the prediction
+plot(p1, col=cl)
+# Now, let's plot the presences
+points(presences, pch=19)
 
 
+# Let's make a final stack with everything altogether
+s1 <- stack(preds, p1)
+plot(s1, col=cl)  # I've made a stack of all the plots of the different predictions and the final result
 
-
-
+# Let's change the names of the graphs
+names(s1) <- c("elevation", "precipitation", "temperature", "vegetation", "probability")
+plot(s1, col=cl)
