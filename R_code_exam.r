@@ -6,6 +6,8 @@ if (!require("raster")) install.packages("raster"); library("raster")
 if (!require("ncdf4")) install.packages("ncdf4"); library("ncdf4")
 if (!require("RStoolbox")) install.packages("RStoolbox"); library("RStoolbox")
 if (!require("gridExtra")) install.packages("gridExtra"); library("gridExtra")
+if (!require("patchwork")) install.packages("patchwork"); library("patchwork")
+
 
 
 
