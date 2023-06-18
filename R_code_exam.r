@@ -1,4 +1,5 @@
 # Making sure that the packages are installed and recalling the libraries
+# If the package is not installed, install it, if not, recall it
 if (!require("ggplot2")) install.packages("ggplot2"); library("ggplot2")
 if (!require("viridis")) install.packages("viridis"); library("viridis")
 if (!require("raster")) install.packages("raster"); library("raster")
