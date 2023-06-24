@@ -7,8 +7,8 @@ if (!require("viridis")) install.packages("viridis"); library("viridis")  # Pack
 if (!require("raster")) install.packages("raster"); library("raster")  # Package to read, write, manipulate, analyze and model spatial data
 if (!require("ncdf4")) install.packages("ncdf4"); library("ncdf4")  # Package to manage files with .nc extension (from Copernicus)
 if (!require("RStoolbox")) install.packages("RStoolbox"); library("RStoolbox")  # Package for quantitative estimates
-if (!require("gridExtra")) install.packages("gridExtra"); library("gridExtra")  # Package to build multiframes with different graphs from ggplot2
-# if (!require("patchwork")) install.packages("patchwork"); library("patchwork")  # Forse puoi usare solo una tra gridExtra e patchwork!
+# if (!require("gridExtra")) install.packages("gridExtra"); library("gridExtra")  # Package to build multiframes with different graphs from ggplot2
+if (!require("patchwork")) install.packages("patchwork"); library("patchwork")  # Package to build multiframes
 
 # Puoi provare a usare i packages RColorBrewer e colorspace
 
@@ -39,10 +39,35 @@ lai_raster
 lai_stack <- stack(lai_raster)
 lai_stack
 
+# Crop only the area of interest (Nigeria) using coordinates
+# Chose the extension to crop (the first two numbers are longitude and the next numbers are latitude)
+ext <- c(2.3, 14.9, 3.8, 14.3)
+lai_crop <- crop(lai_stack, ext)  # Cropping the whole stack
+# Let's see if the cropping was effective
+plot(lai_crop$Leaf.Area.Index.1km.1)  # I can see the name computing lai_stack and looking at "names"
+# I can see the whole Nigeria and a little bit of Cameroon in the bottom right corner
 
+# Because I cropped all the data together with the same extent I should assign a name to each file
+LAI_2000 <- lai_crop$Leaf.Area.Index.1km.1
+LAI_2007 <- lai_crop$Leaf.Area.Index.1km.2
+LAI_2014 <- lai_crop$Leaf.Area.Index.1km.3
+LAI_2020 <- lai_crop$Leaf.Area.Index.1km.4
 
+# Let's do a ggplot with the palette "viridis"
+p2000_lai <- ggplot() + geom_raster(LAI_2000, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.1)) +
+scale_fill_viridis() + theme_bw() + ggtitle("LAI in 2000") + 
+theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+p2007_lai <- ggplot() + geom_raster(LAI_2007, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.2)) +
+scale_fill_viridis() + theme_bw() + ggtitle("LAI in 2007") + 
+theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+p2014_lai <- ggplot() + geom_raster(LAI_2014, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.3)) +
+scale_fill_viridis() + theme_bw() + ggtitle("LAI in 2014") + 
+theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+p2020_lai <- ggplot() + geom_raster(LAI_2020, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.4)) +
+scale_fill_viridis() + theme_bw() + ggtitle("LAI in 2020") + 
+theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
-
+grid.arrange(p2000_lai, p2007_lai, p2014_lai, p2020_lai, nrow=2)
 
 
 
