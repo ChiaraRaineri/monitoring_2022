@@ -66,8 +66,18 @@ theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element
 p2020_lai <- ggplot() + geom_raster(LAI_2020, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.4)) +
 scale_fill_viridis() + theme_bw() + ggtitle("LAI in 2020") + 
 theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-
+# Put the plots in a multiframe
 grid.arrange(p2000_lai, p2007_lai, p2014_lai, p2020_lai, nrow=2)
+# The small bell-shaped patch on the left is Old Oyo National park
+
+# Export the multiframe
+png("outputs/LAI_all_plots.png", res = 300, width = 4000, height = 2500)
+grid.arrange(p2000_lai, p2007_lai, p2014_lai, p2020_lai, nrow=2)
+dev.off()
+
+
+
+
 
 
 
