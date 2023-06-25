@@ -82,16 +82,23 @@ dev.off()
 
 # Use the function pairs() to build a plot matrix consisting of scatterplots for each variable-combination of the data frame
 names(lai_crop) <- c("LAI_2000", "LAI_2007", "LAI_2014", "LAI_2020")  # Assign a name to each year
-pairs(lai_crop, labels = c("LAI_2000", "LAI_2007", "LAI_2014", "LAI_2020"))
+pairs(lai_crop)
 # Export
 png("outputs/LAI_pairs.png", res=300, width=3000, height=3000)
-pairs(lai_crop, labels = c("LAI_2000", "LAI_2007", "LAI_2014", "LAI_2020"))
+pairs(lai_crop)
 dev.off()
 
 # Let's see the differences in LAI between the year 2000 and the year 2020
-
-
-
+# This histogram is also present in the matrix
+plot(LAI_2000, LAI_2020, pch = 19, maxpixels=800000, xlab="LAI_2000", ylab="LAI_2020")
+# Put a y = bx + a line (where the slope (a) is 1 and the intercept (b) is 0) to better see the differences between the two years
+abline(0, 1, col="red")
+# Export
+png("outputs/LAI_hist.png", res=300, width=1500, height=1500)
+plot(LAI_2000, LAI_2020, pch = 19, maxpixels=800000, xlab="LAI_2000", ylab="LAI_2020")
+abline(0, 1, col="red")
+dev.off()
+# Now compute the difference between the two images
 
 
 
