@@ -8,6 +8,7 @@ if (!require("raster")) install.packages("raster"); library("raster")  # Package
 if (!require("ncdf4")) install.packages("ncdf4"); library("ncdf4")  # Package to manage files with .nc extension (from Copernicus)
 if (!require("RStoolbox")) install.packages("RStoolbox"); library("RStoolbox")  # Package for quantitative estimates
 if (!require("gridExtra")) install.packages("gridExtra"); library("gridExtra")  # Package to build multiframes with different graphs from ggplot2
+if (!require("colorspace")) install.packages("colorspace"); library("colorspace")
 # if (!require("patchwork")) install.packages("patchwork"); library("patchwork")  # Package to build multiframes
 
 # Puoi provare a usare i packages RColorBrewer e colorspace
@@ -27,9 +28,8 @@ setwd("C:/lab/exam")
 
 
 ### LAI ###
-## Data import and qualitative analysis ##
 
-# LAI is useful to see the extent of the vegetation cover, in particular for forests, and we can use it to estimate the entity of deforestation
+# LAI is useful to see the extent of the vegetation cover in particular for forests, and we can use it to estimate the entity of deforestation
 
 # Make a list with the available files using a common pattern between all of them
 lai_list <- list.files(pattern = "LAI")
@@ -56,17 +56,17 @@ LAI_2007 <- lai_crop$Leaf.Area.Index.1km.2
 LAI_2014 <- lai_crop$Leaf.Area.Index.1km.3
 LAI_2020 <- lai_crop$Leaf.Area.Index.1km.4
 
-# Let's do a ggplot with the palette "viridis"
-p2000_lai <- ggplot() + geom_raster(LAI_2000, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.1)) +
+# Let's do a ggplot with the palette "viridis", making the graphs as clean and pleasing as possible
+p2000_lai <- ggplot() + geom_raster(LAI_2000, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.1)) + coord_fixed(ratio = 1) +
 scale_fill_viridis() + theme_bw() + ggtitle("LAI in 2000") + labs(fill="LAI") +
 theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-p2007_lai <- ggplot() + geom_raster(LAI_2007, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.2)) +
+p2007_lai <- ggplot() + geom_raster(LAI_2007, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.2)) + coord_fixed(ratio = 1) +
 scale_fill_viridis() + theme_bw() + ggtitle("LAI in 2007") + labs(fill="LAI") +
 theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-p2014_lai <- ggplot() + geom_raster(LAI_2014, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.3)) +
+p2014_lai <- ggplot() + geom_raster(LAI_2014, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.3)) + coord_fixed(ratio = 1) +
 scale_fill_viridis() + theme_bw() + ggtitle("LAI in 2014") + labs(fill="LAI") +
 theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-p2020_lai <- ggplot() + geom_raster(LAI_2020, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.4)) +
+p2020_lai <- ggplot() + geom_raster(LAI_2020, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.4)) + coord_fixed(ratio = 1) +
 scale_fill_viridis() + theme_bw() + ggtitle("LAI in 2020") + labs(fill="LAI") +
 theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 # Put the plots in a multiframe
@@ -89,7 +89,7 @@ pairs(lai_crop)
 dev.off()
 
 # Let's see the differences in LAI between the year 2000 and the year 2020
-# This histogram is also present in the matrix
+# This histogram is also present in the matrix (bottom left corner)
 plot(LAI_2000, LAI_2020, pch = 19, maxpixels=800000, xlab="LAI_2000", ylab="LAI_2020")
 # Put a y = bx + a line (where the slope (a) is 1 and the intercept (b) is 0) to better see the differences between the two years
 abline(0, 1, col="red")
@@ -98,7 +98,44 @@ png("outputs/LAI_hist.png", res=300, width=1500, height=1500)
 plot(LAI_2000, LAI_2020, pch = 19, maxpixels=800000, xlab="LAI_2000", ylab="LAI_2020")
 abline(0, 1, col="red")
 dev.off()
-# Now compute the difference between the two images
+
+# Now compute the difference between the two images (estimate the changes in time in termn of the amount of forest which have been lost or gained)
+LAI_dif <- LAI_2020 - LAI_2000 # Positive values are those in which LAI was higher in 2020 (green), while negatives higher in 2000 (red)
+cl <- diverging_hcl(5, "Red-Green")
+plot(LAI_dif, col = cl, main="LAI differences between 2000 and 2020")
+
+
+
+library(rasterVis)
+library(sp)
+# Download States boundaries (might take time)
+nigeria <- getData('GADM', country='Nigeria', level=1)
+
+# Plot raster and California:
+levelplot(LAI_2000) + 
+layer(sp.polygons(nigeria))
+LAI_2000
+
+
+if (!require("maps")) install.packages("maps"); library("maps")
+map <- map_data("state")
+nigeria <- subset(map, region %in% "nigeria")
+
+ggplot() + 
+  theme_void() +
+  geom_polygon(data = nigeria, 
+               aes(x=long, y = lat, group = group)
+               
+ggplot() + geom_raster(LAI_2000, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.1)) + coord_fixed(ratio = 1) +
+geom_polygon(data=nigeria,aes(x=long,y=lat,group=group), inherit.aes=F, colour='black', fill=NA) 
+
+
+     geom_polygon(LAI_2000,aes(x=long,y=lat,group=group), inherit.aes=F, 
+     colour='black', fill=NA)
+
+
+
+
 
 
 
@@ -122,16 +159,16 @@ FAPAR_2014 <- fapar_crop$Fraction.of.Absorbed.Photosynthetically.Active.Radiatio
 FAPAR_2020 <- fapar_crop$Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.4
 
 # Let's do a ggplot with the palette "viridis"
-p2000_fapar <- ggplot() + geom_raster(FAPAR_2000, mapping = aes(x=x, y=y, fill=Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.1)) +
-scale_fill_viridis() + theme_bw() + ggtitle("FAPAR in 2000") + labs(fill="Fapar") +
+p2000_fapar <- ggplot() + geom_raster(FAPAR_2000, mapping = aes(x=x, y=y, fill=Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.1)) + coord_fixed(ratio = 1) +
+scale_fill_viridis() + theme_bw() + ggtitle("FAPAR in 2000") + labs(fill="Fapar") + 
 theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-p2007_fapar <- ggplot() + geom_raster(FAPAR_2007, mapping = aes(x=x, y=y, fill=Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.2)) +
+p2007_fapar <- ggplot() + geom_raster(FAPAR_2007, mapping = aes(x=x, y=y, fill=Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.2)) + coord_fixed(ratio = 1) +
 scale_fill_viridis() + theme_bw() + ggtitle("FAPAR in 2007") + labs(fill="Fapar") +
 theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-p2014_fapar <- ggplot() + geom_raster(FAPAR_2014, mapping = aes(x=x, y=y, fill=Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.3)) +
+p2014_fapar <- ggplot() + geom_raster(FAPAR_2014, mapping = aes(x=x, y=y, fill=Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.3)) + coord_fixed(ratio = 1) +
 scale_fill_viridis() + theme_bw() + ggtitle("FAPAR in 2014") + labs(fill="Fapar") +
 theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-p2020_fapar <- ggplot() + geom_raster(FAPAR_2020, mapping = aes(x=x, y=y, fill=Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.4)) +
+p2020_fapar <- ggplot() + geom_raster(FAPAR_2020, mapping = aes(x=x, y=y, fill=Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.4)) + coord_fixed(ratio = 1) +
 scale_fill_viridis() + theme_bw() + ggtitle("FAPAR in 2020") + labs(fill="Fapar") +
 theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
 # Put the plots in a multiframe
