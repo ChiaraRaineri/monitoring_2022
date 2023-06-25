@@ -87,12 +87,12 @@ pairs(lai_crop)
 dev.off()
 
 # Let's see the differences in LAI between the year 2000 and the year 2020
-# This histogram is also present in the matrix (bottom left corner)
+# This scatterplot is also present in the matrix (bottom left corner)
 plot(LAI_2000, LAI_2020, pch = 19, maxpixels=800000, xlab="LAI_2000", ylab="LAI_2020")
 # Put a y = bx + a line (where the slope (a) is 1 and the intercept (b) is 0) to better see the differences between the two years
 abline(0, 1, col="red")
 # Export
-png("outputs/LAI_hist.png", res=300, width=1500, height=1500)
+png("outputs/LAI_scatterplot.png", res=300, width=1500, height=1500)
 plot(LAI_2000, LAI_2020, pch = 19, maxpixels=800000, xlab="LAI_2000", ylab="LAI_2020")
 abline(0, 1, col="red")
 dev.off()
@@ -119,6 +119,9 @@ plot(LAI_dif4, col = cl, main="LAI difference 2000-2020", colNA = "light blue")
 dev.off()
 
 
+
+# Adesso magari fai la stessa cosa con FAPAR e poi fai l'analisi quantitativa con gli istogrammi (parte finale codice paola)
+# alla fine parlerai dell'NDVI
 
 
 
