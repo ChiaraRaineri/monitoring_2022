@@ -109,6 +109,14 @@ plot(LAI_dif3, col = cl, main="LAI difference 2014-2020", colNA = "light blue")
 LAI_dif4 <- LAI_2020 - LAI_2000 
 plot(LAI_dif4, col = cl, main="LAI difference 2000-2020", colNA = "light blue") 
 
+# Export
+png("outputs/LAI_diff.png", res = 300, width = 4000, height = 2500)
+par(mfrow = c(2,2))
+plot(LAI_dif1, col = cl, main="LAI difference 2000-2007", colNA = "light blue")
+plot(LAI_dif2, col = cl, main="LAI difference 2007-2014", colNA = "light blue")
+plot(LAI_dif3, col = cl, main="LAI difference 2014-2020", colNA = "light blue")
+plot(LAI_dif4, col = cl, main="LAI difference 2000-2020", colNA = "light blue") 
+dev.off()
 
 
 
