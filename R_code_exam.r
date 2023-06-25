@@ -7,8 +7,8 @@ if (!require("viridis")) install.packages("viridis"); library("viridis")  # Pack
 if (!require("raster")) install.packages("raster"); library("raster")  # Package to read, write, manipulate, analyze and model spatial data
 if (!require("ncdf4")) install.packages("ncdf4"); library("ncdf4")  # Package to manage files with .nc extension (from Copernicus)
 if (!require("RStoolbox")) install.packages("RStoolbox"); library("RStoolbox")  # Package for quantitative estimates
-# if (!require("gridExtra")) install.packages("gridExtra"); library("gridExtra")  # Package to build multiframes with different graphs from ggplot2
-if (!require("patchwork")) install.packages("patchwork"); library("patchwork")  # Package to build multiframes
+if (!require("gridExtra")) install.packages("gridExtra"); library("gridExtra")  # Package to build multiframes with different graphs from ggplot2
+# if (!require("patchwork")) install.packages("patchwork"); library("patchwork")  # Package to build multiframes
 
 # Puoi provare a usare i packages RColorBrewer e colorspace
 
@@ -27,6 +27,9 @@ setwd("C:/lab/exam")
 
 
 ### LAI ###
+## Data import and qualitative analysis ##
+
+# LAI is useful to see the extent of the vegetation cover, in particular for forests, and we can use it to estimate the entity of deforestation
 
 # Make a list with the available files using a common pattern between all of them
 lai_list <- list.files(pattern = "LAI")
@@ -55,20 +58,22 @@ LAI_2020 <- lai_crop$Leaf.Area.Index.1km.4
 
 # Let's do a ggplot with the palette "viridis"
 p2000_lai <- ggplot() + geom_raster(LAI_2000, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.1)) +
-scale_fill_viridis() + theme_bw() + ggtitle("LAI in 2000") + 
+scale_fill_viridis() + theme_bw() + ggtitle("LAI in 2000") + labs(fill="LAI") +
 theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 p2007_lai <- ggplot() + geom_raster(LAI_2007, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.2)) +
-scale_fill_viridis() + theme_bw() + ggtitle("LAI in 2007") + 
+scale_fill_viridis() + theme_bw() + ggtitle("LAI in 2007") + labs(fill="LAI") +
 theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 p2014_lai <- ggplot() + geom_raster(LAI_2014, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.3)) +
-scale_fill_viridis() + theme_bw() + ggtitle("LAI in 2014") + 
+scale_fill_viridis() + theme_bw() + ggtitle("LAI in 2014") + labs(fill="LAI") +
 theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 p2020_lai <- ggplot() + geom_raster(LAI_2020, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.4)) +
-scale_fill_viridis() + theme_bw() + ggtitle("LAI in 2020") + 
+scale_fill_viridis() + theme_bw() + ggtitle("LAI in 2020") + labs(fill="LAI") +
 theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 # Put the plots in a multiframe
 grid.arrange(p2000_lai, p2007_lai, p2014_lai, p2020_lai, nrow=2)
+
 # The small bell-shaped patch on the left is Old Oyo National park
+# In the top right corner we can see Lake Chad
 
 # Export the multiframe
 png("outputs/LAI_all_plots.png", res = 300, width = 4000, height = 2500)
@@ -77,11 +82,84 @@ dev.off()
 
 
 
+### FAPAR ###
+## Data import and qualitative analysis ##
+
+fapar_list <- list.files(pattern = "FAPAR")
+fapar_list
+fapar_raster <- lapply(fapar_list, raster)
+fapar_raster
+fapar_stack <- stack(fapar_raster)
+fapar_stack
+# Cropping
+fapar_crop <- crop(fapar_stack, ext)
+FAPAR_2000 <- fapar_crop$Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.1
+FAPAR_2007 <- fapar_crop$Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.2
+FAPAR_2014 <- fapar_crop$Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.3
+FAPAR_2020 <- fapar_crop$Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.4
+
+# Let's do a ggplot with the palette "viridis"
+p2000_fapar <- ggplot() + geom_raster(FAPAR_2000, mapping = aes(x=x, y=y, fill=Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.1)) +
+scale_fill_viridis() + theme_bw() + ggtitle("FAPAR in 2000") + labs(fill="Fapar") +
+theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+p2007_fapar <- ggplot() + geom_raster(FAPAR_2007, mapping = aes(x=x, y=y, fill=Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.2)) +
+scale_fill_viridis() + theme_bw() + ggtitle("FAPAR in 2007") + labs(fill="Fapar") +
+theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+p2014_fapar <- ggplot() + geom_raster(FAPAR_2014, mapping = aes(x=x, y=y, fill=Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.3)) +
+scale_fill_viridis() + theme_bw() + ggtitle("FAPAR in 2014") + labs(fill="Fapar") +
+theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+p2020_fapar <- ggplot() + geom_raster(FAPAR_2020, mapping = aes(x=x, y=y, fill=Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.4)) +
+scale_fill_viridis() + theme_bw() + ggtitle("FAPAR in 2020") + labs(fill="Fapar") +
+theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
+# Put the plots in a multiframe
+grid.arrange(p2000_fapar, p2007_fapar, p2014_fapar, p2020_fapar, nrow=2)
+# Exporting
+png("outputs/FAPAR_all_plots.png", res = 300, width = 4000, height = 2500)
+grid.arrange(p2000_fapar, p2007_fapar, p2014_fapar, p2020_fapar, nrow=2)
+dev.off()
 
 
 
+### NDVI ###
+## Data import and qualitative analysis ##
 
 
+# I grafici di ggplot non mi dicono niente, meglio ggRGB (guarda code di paola e simone celebrin)
+
+ndvi_list <- list.files(pattern = "NDVI")
+ndvi_list
+ndvi_raster <- lapply(ndvi_list, raster)
+ndvi_raster
+ndvi_stack <- stack(ndvi_raster)
+ndvi_stack
+# Cropping
+ndvi_crop <- crop(ndvi_stack, ext)
+NDVI_2000 <- ndvi_crop$Normalized.Difference.Vegetation.Index.1km.1
+NDVI_2007 <- ndvi_crop$Normalized.Difference.Vegetation.Index.1km.2
+NDVI_2014 <- ndvi_crop$Normalized.Difference.Vegetation.Index.1km.3
+NDVI_2020 <- ndvi_crop$Normalized.Difference.Vegetation.Index.1km.4
+
+# Let's do a ggplot with the palette "viridis"
+p2000_ndvi <- ggplot() + geom_raster(NDVI_2000, mapping = aes(x=x, y=y, fill=Normalized.Difference.Vegetation.Index.1km.1)) +
+scale_fill_viridis() + theme_bw() + ggtitle("NDVI in 2000") + labs(fill="NDVI") +
+theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+p2007_ndvi <- ggplot() + geom_raster(NDVI_2007, mapping = aes(x=x, y=y, fill=Normalized.Difference.Vegetation.Index.1km.2)) +
+scale_fill_viridis() + theme_bw() + ggtitle("NDVI in 2007") + labs(fill="NDVI") +
+theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+p2014_ndvi <- ggplot() + geom_raster(NDVI_2014, mapping = aes(x=x, y=y, fill=Normalized.Difference.Vegetation.Index.1km.3)) +
+scale_fill_viridis() + theme_bw() + ggtitle("NDVI in 2014") + labs(fill="NDVI") +
+theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+p2020_ndvi <- ggplot() + geom_raster(NDVI_2020, mapping = aes(x=x, y=y, fill=Normalized.Difference.Vegetation.Index.1km.4)) +
+scale_fill_viridis() + theme_bw() + ggtitle("NDVI in 2020") + labs(fill="NDVI") +
+theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
+# Put the plots in a multiframe
+grid.arrange(p2000_ndvi, p2007_ndvi, p2014_ndvi, p2020_ndvi, nrow=2)
+# Exporting
+png("outputs/NDVI_all_plots.png", res = 300, width = 4000, height = 2500)
+grid.arrange(p2000_ndvi, p2007_ndvi, p2014_ndvi, p2020_ndvi, nrow=2)
+dev.off()
 
 
+plot(ndvi_crop)
+ggRGB(ndvi_crop, r=1, g=3, b=2, stretch="Lin")
 
