@@ -11,8 +11,6 @@ if (!require("gridExtra")) install.packages("gridExtra"); library("gridExtra")  
 if (!require("colorspace")) install.packages("colorspace"); library("colorspace")
 # if (!require("patchwork")) install.packages("patchwork"); library("patchwork")  # Package to build multiframes
 
-# Puoi provare a usare i packages RColorBrewer e colorspace
-
 
 # Setting the working directory
 setwd("C:/lab/exam")
@@ -99,39 +97,17 @@ plot(LAI_2000, LAI_2020, pch = 19, maxpixels=800000, xlab="LAI_2000", ylab="LAI_
 abline(0, 1, col="red")
 dev.off()
 
-# Now compute the difference between the two images (estimate the changes in time in termn of the amount of forest which have been lost or gained)
-LAI_dif <- LAI_2020 - LAI_2000 # Positive values are those in which LAI was higher in 2020 (green), while negatives higher in 2000 (red)
+# Now compute the difference between the images (estimate the changes in time in termn of the amount of forest which have been lost or gained)
+par(mfrow = c(2,2))
 cl <- diverging_hcl(5, "Red-Green")
-plot(LAI_dif, col = cl, main="LAI differences between 2000 and 2020")
-
-
-
-library(rasterVis)
-library(sp)
-# Download States boundaries (might take time)
-nigeria <- getData('GADM', country='Nigeria', level=1)
-
-# Plot raster and California:
-levelplot(LAI_2000) + 
-layer(sp.polygons(nigeria))
-LAI_2000
-
-
-if (!require("maps")) install.packages("maps"); library("maps")
-map <- map_data("state")
-nigeria <- subset(map, region %in% "nigeria")
-
-ggplot() + 
-  theme_void() +
-  geom_polygon(data = nigeria, 
-               aes(x=long, y = lat, group = group)
-               
-ggplot() + geom_raster(LAI_2000, mapping = aes(x=x, y=y, fill=Leaf.Area.Index.1km.1)) + coord_fixed(ratio = 1) +
-geom_polygon(data=nigeria,aes(x=long,y=lat,group=group), inherit.aes=F, colour='black', fill=NA) 
-
-
-     geom_polygon(LAI_2000,aes(x=long,y=lat,group=group), inherit.aes=F, 
-     colour='black', fill=NA)
+LAI_dif1 <- LAI_2007 - LAI_2000 # Positive values are those in which LAI was higher in 2020 (green), while negatives higher in 2000 (red)
+plot(LAI_dif1, col = cl, main="LAI difference 2000-2007", colNA = "light blue")
+LAI_dif2 <- LAI_2014 - LAI_2007 
+plot(LAI_dif2, col = cl, main="LAI difference 2007-2014", colNA = "light blue")
+LAI_dif3 <- LAI_2020 - LAI_2014 
+plot(LAI_dif3, col = cl, main="LAI difference 2014-2020", colNA = "light blue")
+LAI_dif4 <- LAI_2020 - LAI_2000 
+plot(LAI_dif4, col = cl, main="LAI difference 2000-2020", colNA = "light blue") 
 
 
 
