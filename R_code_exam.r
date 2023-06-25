@@ -43,7 +43,7 @@ lai_stack <- stack(lai_raster)
 lai_stack
 
 # Crop only the area of interest (Nigeria) using coordinates
-# Chose the extension to crop (the first two numbers are longitude and the next numbers are latitude)
+# Choose the extension to crop (the first two numbers are longitude and the next numbers are latitude)
 ext <- c(2.3, 14.9, 3.8, 14.3)
 lai_crop <- crop(lai_stack, ext)  # Cropping the whole stack
 # Let's see if the cropping was effective
@@ -80,10 +80,26 @@ png("outputs/LAI_all_plots.png", res = 300, width = 4000, height = 2500)
 grid.arrange(p2000_lai, p2007_lai, p2014_lai, p2020_lai, nrow=2)
 dev.off()
 
+# Use the function pairs() to build a plot matrix consisting of scatterplots for each variable-combination of the data frame
+names(lai_crop) <- c("LAI_2000", "LAI_2007", "LAI_2014", "LAI_2020")  # Assign a name to each year
+pairs(lai_crop, labels = c("LAI_2000", "LAI_2007", "LAI_2014", "LAI_2020"))
+# Export
+png("outputs/LAI_pairs.png", res=300, width=3000, height=3000)
+pairs(lai_crop, labels = c("LAI_2000", "LAI_2007", "LAI_2014", "LAI_2020"))
+dev.off()
+
+# Let's see the differences in LAI between the year 2000 and the year 2020
+
+
+
+
+
 
 
 ### FAPAR ###
 ## Data import and qualitative analysis ##
+
+# FAPAR is useful to estimate the green and alive elements of the canopy, it can be useful to estimate the extent of desertification
 
 fapar_list <- list.files(pattern = "FAPAR")
 fapar_list
