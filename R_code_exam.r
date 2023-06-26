@@ -25,7 +25,7 @@ setwd("C:/lab/exam")
 # In particular, comparisons between the year 2000 and the year 2020 are made
 
 
-### LAI ###
+########### LAI ###########
 
 # LAI is useful to see the extent of the vegetation cover in particular for forests, and we can use it to estimate the entity of deforestation
 
@@ -126,9 +126,12 @@ dev.off()
 
 
 
+# Magari unsuperclass metti 3 classi
 
 
-### FAPAR ###
+
+
+########### FAPAR ###########
 
 # FAPAR is useful to estimate the green and alive elements of the canopy, it can be useful to estimate the extent of desertification
 
@@ -184,6 +187,8 @@ abline(0, 1, col="red")
 dev.off()
 
 # Now compute the difference between the images
+# We can see if the photosynthetic activity in the interval years was higher (green) or lower (red) than normal
+# This indicator is subjected to a lot of variables, sometimes not even related to drought
 par(mfrow = c(2,2))
 FAPAR_dif1 <- FAPAR_2007 - FAPAR_2000 # Positive values are those in which FAPAR was higher in 2007 (green), while negatives were higher in 2000 (red)
 plot(FAPAR_dif1, col = cl, main="FAPAR difference 2000-2007", colNA = "light blue")
@@ -197,13 +202,7 @@ plot(FAPAR_dif4, col = cl, main="FAPAR difference 2000-2020", colNA = "light blu
 
 
 
-
-
-
-
-
-### NDVI ###
-## Data import and qualitative analysis ##
+########### NDVI ###########
 
 
 # I grafici di ggplot non mi dicono niente, meglio ggRGB (guarda code di paola e simone celebrin)
@@ -284,7 +283,7 @@ dev.off()
 
 # Use the function pairs() to build a plot matrix
 names(fcover_crop) <- c("FCOVER_2000", "FCOVER_2020")  # Assign a name to each year
-plot(FAPAR_2000, FAPAR_2020, pch = 19, maxpixels=800000, xlab="FAPAR_2000", ylab="FAPAR_2020")
+plot(FCOVER_2000, FCOVER_2020, pch = 19, maxpixels=800000, xlab="FCOVER_2000", ylab="FCOVER_2020")
 abline(0, 1, col="red")
 # Export
 png("outputs/FAPAR_scatterplot.png", res=300, width=1500, height=1500)
@@ -293,9 +292,9 @@ abline(0, 1, col="red")
 dev.off()
 
 # Now compute the difference between the images
-par(mfrow = c(2,2))
+par(mfrow = c(1,2))
 FCOVER_2000_dif <- FCOVER_2020 - FCOVER_2000 
-plot(FCOVER_2000_dif, col = cl, main="FA dCOVERfference 2000-2020", colNA = "light blue") 
+plot(FCOVER_2000_dif, col = cl, main="FCOVER difference 2000-2020", colNA = "light blue") 
 
 
 
