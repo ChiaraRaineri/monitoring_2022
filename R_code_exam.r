@@ -92,7 +92,7 @@ plot(LAI_2000, LAI_2020, pch = 19, maxpixels=800000, xlab="LAI_2000", ylab="LAI_
 # Put a y = bx + a line (where the slope (a) is 1 and the intercept (b) is 0) to better see the differences between the two years
 abline(0, 1, col="red")
 # Export
-png("outputs/LAI_scatterplot.png", res=300, width=1500, height=1500)
+png("outputs/LAI_scatterplot_1.png", res=300, width=1500, height=1500)
 plot(LAI_2000, LAI_2020, pch = 19, maxpixels=800000, xlab="LAI_2000", ylab="LAI_2020")
 abline(0, 1, col="red")
 dev.off()
@@ -100,7 +100,7 @@ dev.off()
 # Now compute the difference between the images (estimate the changes in time in termn of the amount of forest which have been lost or gained)
 par(mfrow = c(2,2))
 cl <- diverging_hcl(5, "Red-Green")
-LAI_dif1 <- LAI_2007 - LAI_2000 # Positive values are those in which LAI was higher in 2020 (green), while negatives higher in 2000 (red)
+LAI_dif1 <- LAI_2007 - LAI_2000 # Positive values are those in which LAI was higher in 2007 (green), while negatives were higher in 2000 (red)
 plot(LAI_dif1, col = cl, main="LAI difference 2000-2007", colNA = "light blue")
 LAI_dif2 <- LAI_2014 - LAI_2007 
 plot(LAI_dif2, col = cl, main="LAI difference 2007-2014", colNA = "light blue")
@@ -118,20 +118,21 @@ plot(LAI_dif3, col = cl, main="LAI difference 2014-2020", colNA = "light blue")
 plot(LAI_dif4, col = cl, main="LAI difference 2000-2020", colNA = "light blue") 
 dev.off()
 
-
-
-# Adesso magari fai la stessa cosa con FAPAR e poi fai l'analisi quantitativa con gli istogrammi (parte finale codice paola)
-# alla fine parlerai dell'NDVI
+# Since the most relevant differences were between 2007 and 2014, let's do a scatterplot
+png("outputs/LAI_scatterplot_2.png", res=300, width=1500, height=1500)
+plot(LAI_2007, LAI_2014, pch = 19, maxpixels=800000, xlab="LAI_2007", ylab="LAI_2014")
+abline(0, 1, col="red")
+dev.off()
 
 
 
 
 
 ### FAPAR ###
-## Data import and qualitative analysis ##
 
 # FAPAR is useful to estimate the green and alive elements of the canopy, it can be useful to estimate the extent of desertification
 
+# Data import
 fapar_list <- list.files(pattern = "FAPAR")
 fapar_list
 fapar_raster <- lapply(fapar_list, raster)
@@ -164,6 +165,40 @@ grid.arrange(p2000_fapar, p2007_fapar, p2014_fapar, p2020_fapar, nrow=2)
 png("outputs/FAPAR_all_plots.png", res = 300, width = 4000, height = 2500)
 grid.arrange(p2000_fapar, p2007_fapar, p2014_fapar, p2020_fapar, nrow=2)
 dev.off()
+
+# Use the function pairs() to build a plot matrix
+names(fapar_crop) <- c("FAPAR_2000", "FAPAR_2007", "FAPAR_2014", "FAPAR_2020")  # Assign a name to each year
+pairs(fapar_crop)
+# Export
+png("outputs/FAPAR_pairs.png", res=300, width=3000, height=3000)
+pairs(fapar_crop)
+dev.off()
+
+# Let's see the differences in FAPAR between the year 2000 and the year 2020
+plot(FAPAR_2000, FAPAR_2020, pch = 19, maxpixels=800000, xlab="FAPAR_2000", ylab="FAPAR_2020")
+abline(0, 1, col="red")
+# Export
+png("outputs/FAPAR_scatterplot.png", res=300, width=1500, height=1500)
+plot(FAPAR_2000, FAPAR_2020, pch = 19, maxpixels=800000, xlab="FAPAR_2000", ylab="FAPAR_2020")
+abline(0, 1, col="red")
+dev.off()
+
+# Now compute the difference between the images
+par(mfrow = c(2,2))
+FAPAR_dif1 <- FAPAR_2007 - FAPAR_2000 # Positive values are those in which FAPAR was higher in 2007 (green), while negatives were higher in 2000 (red)
+plot(FAPAR_dif1, col = cl, main="FAPAR difference 2000-2007", colNA = "light blue")
+FAPAR_dif2 <- FAPAR_2014 - FAPAR_2007 
+plot(FAPAR_dif2, col = cl, main="FAPAR difference 2007-2014", colNA = "light blue")
+FAPAR_dif3 <- FAPAR_2020 - FAPAR_2014 
+plot(FAPAR_dif3, col = cl, main="FAPAR difference 2014-2020", colNA = "light blue")
+FAPAR_dif4 <- FAPAR_2020 - FAPAR_2000 
+plot(FAPAR_dif4, col = cl, main="FAPAR difference 2000-2020", colNA = "light blue") 
+
+
+
+
+
+
 
 
 
@@ -209,4 +244,66 @@ dev.off()
 
 plot(ndvi_crop)
 ggRGB(ndvi_crop, r=1, g=3, b=2, stretch="Lin")
+
+
+
+
+
+
+
+
+
+
+
+
+
+fcover_list <- list.files(pattern = "FCOVER")
+fcover_list
+fcover_raster <- lapply(fcover_list, raster)
+fcover_raster
+fcover_stack <- stack(fcover_raster)
+fcover_stack
+# Cropping
+fcover_crop <- crop(fcover_stack, ext)
+FCOVER_2000 <- fcover_crop$Fraction.of.green.Vegetation.Cover.1km.1
+FCOVER_2020 <- fcover_crop$Fraction.of.green.Vegetation.Cover.1km.2
+
+# Let's do a ggplot with the palette "viridis"
+p2000_fcover <- ggplot() + geom_raster(FCOVER_2000, mapping = aes(x=x, y=y, fill=Fraction.of.green.Vegetation.Cover.1km.1)) + coord_fixed(ratio = 1) +
+scale_fill_viridis() + theme_bw() + ggtitle("FCOVER in 2007") + labs(fill="FCOVER") +
+theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+p2020_fcover <- ggplot() + geom_raster(FCOVER_2020, mapping = aes(x=x, y=y, fill=Fraction.of.green.Vegetation.Cover.1km.2)) + coord_fixed(ratio = 1) +
+scale_fill_viridis() + theme_bw() + ggtitle("FCOVER in 2020") + labs(fill="FCOVER") +
+theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
+# Put the plots in a multiframe
+grid.arrange(p2000_fcover, p2020_fcover, nrow=2)
+# Exporting
+png("outputs/FAPAR_all_plots.png", res = 300, width = 4000, height = 2500)
+grid.arrange(p2000_fapar, p2007_fapar, p2014_fapar, p2020_fapar, nrow=2)
+dev.off()
+
+# Use the function pairs() to build a plot matrix
+names(fcover_crop) <- c("FCOVER_2000", "FCOVER_2020")  # Assign a name to each year
+plot(FAPAR_2000, FAPAR_2020, pch = 19, maxpixels=800000, xlab="FAPAR_2000", ylab="FAPAR_2020")
+abline(0, 1, col="red")
+# Export
+png("outputs/FAPAR_scatterplot.png", res=300, width=1500, height=1500)
+plot(FCOVER_2000, FCOVER_2020, pch = 19, maxpixels=800000, xlab="FCOVER_2000", ylab="FCOVER_2020")
+abline(0, 1, col="red")
+dev.off()
+
+# Now compute the difference between the images
+par(mfrow = c(2,2))
+FCOVER_2000_dif <- FCOVER_2020 - FCOVER_2000 
+plot(FCOVER_2000_dif, col = cl, main="FA dCOVERfference 2000-2020", colNA = "light blue") 
+
+
+
+
+
+
+
+
+
+
 
