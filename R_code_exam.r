@@ -198,6 +198,16 @@ FAPAR_dif3 <- FAPAR_2020 - FAPAR_2014
 plot(FAPAR_dif3, col = cl, main="FAPAR difference 2014-2020", colNA = "light blue")
 FAPAR_dif4 <- FAPAR_2020 - FAPAR_2000 
 plot(FAPAR_dif4, col = cl, main="FAPAR difference 2000-2020", colNA = "light blue") 
+# Export
+png("outputs/FAPAR_diff.png", res = 300, width = 4000, height = 2500)
+par(mfrow = c(2,2))
+plot(FAPAR_dif1, col = cl, main="FAPAR difference 2000-2007", colNA = "light blue")
+plot(FAPAR_dif2, col = cl, main="FAPAR difference 2007-2014", colNA = "light blue")
+plot(FAPAR_dif3, col = cl, main="FAPAR difference 2014-2020", colNA = "light blue")
+plot(FAPAR_dif4, col = cl, main="FAPAR difference 2000-2020", colNA = "light blue") 
+dev.off()
+
+
 
 
 
@@ -246,6 +256,67 @@ ggRGB(ndvi_crop, r=1, g=3, b=2, stretch="Lin")
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Choose the extension to crop (the first two numbers are longitude and the next numbers are latitude)
+
+ext <- c(19.2, 26.4, -1.1, 3.4)
+
+
+
+# Forse si può valutare la deforestazione dal 2000 al 2014
+LAI_dif5 <- LAI_2014 - LAI_2000 
+plot(LAI_dif5, col = cl, main="LAI difference 2000-2014", colNA = "light blue") 
 
 
 
