@@ -1,4 +1,4 @@
-# Multi-temporal analysis of deforestation and desertification in Nigeria
+# Multi-temporal analysis of deforestation and desertification in the Congo basin (Democratic Republic of Congo) and in Sahel region
 
 # Making sure that the packages are installed and recalling the libraries
 # If the package is not installed, install it, if not, recall it
@@ -42,11 +42,10 @@ lai_stack
 
 # Crop only the area of interest (Nigeria) using coordinates
 # Choose the extension to crop (the first two numbers are longitude and the next numbers are latitude)
-ext <- c(2.3, 14.9, 3.8, 14.3)
+ext <- c(19.6, 28.5, -4.5, 3.5)
 lai_crop <- crop(lai_stack, ext)  # Cropping the whole stack
 # Let's see if the cropping was effective
 plot(lai_crop$Leaf.Area.Index.1km.1)  # I can see the name computing lai_stack and looking at "names"
-# I can see the whole Nigeria and a little bit of Cameroon in the bottom right corner
 
 # Because I cropped all the data together with the same extent I should assign a name to each file
 LAI_2000 <- lai_crop$Leaf.Area.Index.1km.1
@@ -70,9 +69,6 @@ theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element
 # Put the plots in a multiframe
 grid.arrange(p2000_lai, p2007_lai, p2014_lai, p2020_lai, nrow=2)
 
-# The small bell-shaped patch on the left is Old Oyo National park
-# In the top right corner we can see Lake Chad
-
 # Export the multiframe
 png("outputs/LAI_all_plots.png", res = 300, width = 4000, height = 2500)
 grid.arrange(p2000_lai, p2007_lai, p2014_lai, p2020_lai, nrow=2)
@@ -88,12 +84,27 @@ dev.off()
 
 # Let's see the differences in LAI between the year 2000 and the year 2020
 # This scatterplot is also present in the matrix (bottom left corner)
-plot(LAI_2000, LAI_2020, pch = 19, maxpixels=800000, xlab="LAI_2000", ylab="LAI_2020")
+plot(LAI_2000, LAI_2020, pch = 19, maxpixels=500000, xlab="LAI_2000", ylab="LAI_2020")
 # Put a y = bx + a line (where the slope (a) is 1 and the intercept (b) is 0) to better see the differences between the two years
 abline(0, 1, col="red")
+# Let's see the same graph from 2007 to 2014
+plot(LAI_2007, LAI_2014, pch = 19, maxpixels=500000, xlab="LAI_2007", ylab="LAI_2014")
+abline(0, 1, col="red")
+# Let's see the same graph from 2014 to 2020
+plot(LAI_2014, LAI_2020, pch = 19, maxpixels=500000, xlab="LAI_2014", ylab="LAI_2020")
+abline(0, 1, col="red")
+# Maybe the loss of vegetation in 2014 could be explained by forest fires (or other factors)
 # Export
 png("outputs/LAI_scatterplot_1.png", res=300, width=1500, height=1500)
-plot(LAI_2000, LAI_2020, pch = 19, maxpixels=800000, xlab="LAI_2000", ylab="LAI_2020")
+plot(LAI_2000, LAI_2020, pch = 19, maxpixels=500000, xlab="LAI_2000", ylab="LAI_2020")
+abline(0, 1, col="red")
+dev.off()
+png("outputs/LAI_scatterplot_2.png", res=300, width=1500, height=1500)
+plot(LAI_2007, LAI_2014, pch = 19, maxpixels=500000, xlab="LAI_2007", ylab="LAI_2014")
+abline(0, 1, col="red")
+dev.off()
+png("outputs/LAI_scatterplot_3.png", res=300, width=1500, height=1500)
+plot(LAI_2014, LAI_2020, pch = 19, maxpixels=500000, xlab="LAI_2014", ylab="LAI_2020")
 abline(0, 1, col="red")
 dev.off()
 
@@ -118,22 +129,15 @@ plot(LAI_dif3, col = cl, main="LAI difference 2014-2020", colNA = "light blue")
 plot(LAI_dif4, col = cl, main="LAI difference 2000-2020", colNA = "light blue") 
 dev.off()
 
-# Since the most relevant differences were between 2007 and 2014, let's do a scatterplot
-png("outputs/LAI_scatterplot_2.png", res=300, width=1500, height=1500)
-plot(LAI_2007, LAI_2014, pch = 19, maxpixels=800000, xlab="LAI_2007", ylab="LAI_2014")
-abline(0, 1, col="red")
+png("outputs/LAI_diff_1.png", res = 300, width = 4000, height = 2500)
+plot(LAI_dif4, col = cl, main="LAI difference 2000-2020", colNA = "light blue") 
 dev.off()
-
-
-
-# Magari unsuperclass metti 3 classi
-
 
 
 
 ########### FAPAR ###########
 
-# FAPAR is useful to estimate the green and alive elements of the canopy, it can be useful to estimate the extent of desertification
+# FAPAR is useful to estimate the green and alive elements of the canopy
 
 # Data import
 fapar_list <- list.files(pattern = "FAPAR")
@@ -209,11 +213,14 @@ dev.off()
 
 
 
+########### Quantitative analysis ###########
+
 
 
 
 ########### NDVI ###########
 
+# Fallo per tutta la zona subsaariana
 
 # I grafici di ggplot non mi dicono niente, meglio ggRGB (guarda code di paola e simone celebrin)
 
@@ -258,65 +265,6 @@ ggRGB(ndvi_crop, r=1, g=3, b=2, stretch="Lin")
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Choose the extension to crop (the first two numbers are longitude and the next numbers are latitude)
-
-ext <- c(19.2, 26.4, -1.1, 3.4)
-
-
-
-# Forse si può valutare la deforestazione dal 2000 al 2014
-LAI_dif5 <- LAI_2014 - LAI_2000 
-plot(LAI_dif5, col = cl, main="LAI difference 2000-2014", colNA = "light blue") 
 
 
 
