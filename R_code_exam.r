@@ -138,6 +138,7 @@ dev.off()
 ########### FAPAR ###########
 
 # FAPAR is useful to estimate the green and alive elements of the canopy
+# It's less precise than LAI to visualize differences in vegetation cover
 
 # Data import
 fapar_list <- list.files(pattern = "FAPAR")
@@ -173,26 +174,10 @@ png("outputs/FAPAR_all_plots.png", res = 300, width = 4000, height = 2500)
 grid.arrange(p2000_fapar, p2007_fapar, p2014_fapar, p2020_fapar, nrow=2)
 dev.off()
 
-# Use the function pairs() to build a plot matrix
-names(fapar_crop) <- c("FAPAR_2000", "FAPAR_2007", "FAPAR_2014", "FAPAR_2020")  # Assign a name to each year
-pairs(fapar_crop)
-# Export
-png("outputs/FAPAR_pairs.png", res=300, width=3000, height=3000)
-pairs(fapar_crop)
-dev.off()
-
-# Let's see the differences in FAPAR between the year 2000 and the year 2020
-plot(FAPAR_2000, FAPAR_2020, pch = 19, maxpixels=800000, xlab="FAPAR_2000", ylab="FAPAR_2020")
-abline(0, 1, col="red")
-# Export
-png("outputs/FAPAR_scatterplot.png", res=300, width=1500, height=1500)
-plot(FAPAR_2000, FAPAR_2020, pch = 19, maxpixels=800000, xlab="FAPAR_2000", ylab="FAPAR_2020")
-abline(0, 1, col="red")
-dev.off()
+# Assign a name to each year
+names(fapar_crop) <- c("FAPAR_2000", "FAPAR_2007", "FAPAR_2014", "FAPAR_2020")  
 
 # Now compute the difference between the images
-# We can see if the photosynthetic activity in the interval years was higher (green) or lower (red) than normal
-# This indicator is subjected to a lot of variables, sometimes not even related to drought
 par(mfrow = c(2,2))
 FAPAR_dif1 <- FAPAR_2007 - FAPAR_2000 # Positive values are those in which FAPAR was higher in 2007 (green), while negatives were higher in 2000 (red)
 plot(FAPAR_dif1, col = cl, main="FAPAR difference 2000-2007", colNA = "light blue")
@@ -208,6 +193,10 @@ par(mfrow = c(2,2))
 plot(FAPAR_dif1, col = cl, main="FAPAR difference 2000-2007", colNA = "light blue")
 plot(FAPAR_dif2, col = cl, main="FAPAR difference 2007-2014", colNA = "light blue")
 plot(FAPAR_dif3, col = cl, main="FAPAR difference 2014-2020", colNA = "light blue")
+plot(FAPAR_dif4, col = cl, main="FAPAR difference 2000-2020", colNA = "light blue") 
+dev.off()
+
+png("outputs/FAPAR_diff_1.png", res = 300, width = 4000, height = 2500)
 plot(FAPAR_dif4, col = cl, main="FAPAR difference 2000-2020", colNA = "light blue") 
 dev.off()
 
