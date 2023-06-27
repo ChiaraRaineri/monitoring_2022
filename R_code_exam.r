@@ -233,33 +233,73 @@ dev.off()
 
 # Analyse the frequency distribution of LAI values
 par(mfrow=c(1,3))
-hist(LAI2000_crop,  main="Frequency distribution in 2000", ylim= c(0, 55000), xlim= c(0, 7), xlab = "LAI 2000")
-hist(LAI2014_crop,  main="Frequency distribution in 2014", ylim= c(0, 55000), xlim= c(0, 7), xlab = "LAI 2014")
-hist(LAI2020_crop,  main="Frequency distribution in 2020", ylim= c(0, 55000), xlim= c(0, 7), xlab = "LAI 2020")
+hist(LAI2000_crop,  main = "Frequency distribution in 2000", ylim = c(0, 55000), xlim = c(0, 7), xlab = "LAI 2000")
+hist(LAI2014_crop,  main = "Frequency distribution in 2014", ylim = c(0, 55000), xlim = c(0, 7), xlab = "LAI 2014")
+hist(LAI2020_crop,  main = "Frequency distribution in 2020", ylim = c(0, 55000), xlim = c(0, 7), xlab = "LAI 2020")
 # In 2020, compared with 2000, we can see a decrease in frequency of the highest LAI values, while there's an increase in the lowest values
 # Export
 png("outputs/LAI_crop_hist.png", res=300, width=3000, height=3000)
 par(mfrow=c(1,2))
-hist(LAI2000_crop,  main="Frequency distribution in 2000", ylim= c(0, 55000), xlim= c(0, 7), xlab = "LAI 2000")
-hist(LAI2020_crop,  main="Frequency distribution in 2020", ylim= c(0, 55000), xlim= c(0, 7), xlab = "LAI 2020")
+hist(LAI2000_crop,  main = "Frequency distribution in 2000", ylim = c(0, 55000), xlim = c(0, 7), xlab = "LAI 2000")
+hist(LAI2020_crop,  main = "Frequency distribution in 2020", ylim = c(0, 55000), xlim = c(0, 7), xlab = "LAI 2020")
+dev.off()
+
+# Estimate the changes in LAI in time 
+# Use classification to divide the pixels of the image into 2 classes (high vegetation and low vegetation)
+# Use the library RStoolbox
+lai_class <- lapply(lai_crop2, unsuperClass, nClasses = 2)
+plot(lai_class[[1]]$map) # In this case class 1 is white, that is high vegetation, and class 2 is green, that is low vegetation and water
+# Frequencies of the pixels
+freq(lai_class[[1]]$map) # High vegetation (class 1) = 141735 pixels # Low vegetation and water (class 2) = 39381 pixels # 2000
+freq(lai_class[[3]]$map) # 2014
+freq(lai_class[[4]]$map) # 2020
+# The sum of the pixels is the same for every image
+# freq(lai_class[[1]]$map)
+#      value  count
+# [1,]     1 141735
+# [2,]     2  39381
+
+sum <- 141735 + 39381
+prop1 <- freq(lai_class[[1]]$map) / sum * 100  # 78.26% of high vegetation, 21.74% of low vegetation
+prop2 <- freq(lai_class[[2]]$map) / sum * 100  # 76.55% of high vegetation, 23.45% of low vegetation
+prop3 <- freq(lai_class[[3]]$map) / sum * 100  # 85.16% of high vegetation, 14.84% of low vegetation
+
+# Building a dataframe in order to plot
+cover <- c("High vegetation", "Low vegetation")
+# Year 2000
+percent2000 <- c(78.26, 21.74)
+prop2000 <- data.frame(cover, percent2000)
+cover2000 <- ggplot(prop2000, aes(x=cover, y=percent2000, fill=cover)) + geom_bar(stat="identity") + ylim(0,100) + labs(title="Vegetation cover proportion in 2000") +
+geom_text(aes(label=percent2000), vjust=1.6, color="white", size=3.5) + theme_minimal() + labs(y="Percentage of vegetation cover", x="Cover type") +
+theme(plot.title = element_text(hjust = 0.5))
+# Year 2014
+percent2014 <- c(76.55, 23.45)
+prop2014 <- data.frame(cover, percent2014)
+cover2014 <- ggplot(prop2014, aes(x=cover, y=percent2014, fill=cover)) + geom_bar(stat="identity") + ylim(0,100) + labs(title="Vegetation cover proportion in 2014") +
+geom_text(aes(label=percent2014), vjust=1.6, color="white", size=3.5) + theme_minimal() + labs(y="Percentage of vegetation cover", x="Cover type") +
+theme(plot.title = element_text(hjust = 0.5))
+# Year 2020
+percent2020 <- c(85.16, 14.84)
+prop2020 <- data.frame(cover, percent2020)
+cover2020 <- ggplot(prop2020, aes(x=cover, y=percent2020, fill=cover)) + geom_bar(stat="identity") + ylim(0,100) + labs(title="Vegetation cover proportion in 2020") +
+geom_text(aes(label=percent2020), vjust=1.6, color="white", size=3.5) + theme_minimal() + labs(y="Percentage of vegetation cover", x="Cover type") +
+theme(plot.title = element_text(hjust = 0.5))
+
+# 2000 and 2020 together
+grid.arrange(cover2000, cover2020, nrow=1)
+# 2000 and 2014 together
+grid.arrange(cover2000, cover2014, nrow=1)
+
+# Export
+png("outputs/proportions_1.png", res=300, width=3000, height=1500)
+grid.arrange(cover2000, cover2020, nrow=1)
+dev.off()
+png("outputs/proportions_2.png", res=300, width=3000, height=1500)
+grid.arrange(cover2000, cover2014, nrow=1)
 dev.off()
 
 
-
-
-
-
-
-# Remove NA values
-#length(LAI_dif_crop1[LAI_dif_crop1, na.rm=T])
-#length(LAI_dif_crop2[LAI_dif_crop2, na.rm=T])
-#length(LAI_dif_crop1[LAI_dif_crop1, na.rm=T])
-
-
-
-
-
-
+# LINEAR REGRESSION MODEL
 
 
 
