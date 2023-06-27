@@ -8,7 +8,7 @@ if (!require("raster")) install.packages("raster"); library("raster")  # Package
 if (!require("ncdf4")) install.packages("ncdf4"); library("ncdf4")  # Package to manage files with .nc extension (from Copernicus)
 if (!require("RStoolbox")) install.packages("RStoolbox"); library("RStoolbox")  # Package for quantitative estimates
 if (!require("gridExtra")) install.packages("gridExtra"); library("gridExtra")  # Package to build multiframes with different graphs from ggplot2
-if (!require("colorspace")) install.packages("colorspace"); library("colorspace")
+if (!require("colorspace")) install.packages("colorspace"); library("colorspace")  # Package to use colorspace palettes
 # if (!require("patchwork")) install.packages("patchwork"); library("patchwork")  # Package to build multiframes
 
 
@@ -23,6 +23,7 @@ setwd("C:/lab/exam")
 
 # The multi-temporal analysis is based on the data from the month of June of the years 2000, 2007, 2014 and 2020
 # In particular, comparisons between the year 2000 and the year 2020 are made
+
 
 
 ########### LAI ###########
@@ -203,6 +204,63 @@ dev.off()
 
 
 ########### Quantitative analysis ###########
+
+# Zoom on the more deforested areas as shown by the LAI and FAPAR qualitative analysis
+ext2 <- c(19.0, 23.6, 0.71, 3.84)
+lai_crop2 <- lapply(lai_raster, crop, ext2)
+lai_crop2
+# Since I'm using only three images it's not very useful to create a stack, I can use the function names() instead
+names(lai_crop2) <- c("LAI_2000", "LAI_2007", "LAI_2014", "LAI_2020")
+LAI2000_crop <- lai_crop2$LAI_2000
+LAI2014_crop <- lai_crop2$LAI_2014
+LAI2020_crop <- lai_crop2$LAI_2020
+
+# Compute the differences between 2000, 2014 and 2020 in the cropped area
+par(mfrow = c(2,2))
+LAI_dif_crop1 <- LAI2020_crop - LAI2000_crop # Positive values are those in which LAI was higher in 2020 (green), while negatives were higher in 2000 (red)
+plot(LAI_dif_crop1, col = cl, main="LAI difference 2000-2020", colNA = "light blue")
+LAI_dif_crop2 <- LAI2014_crop - LAI2000_crop
+plot(LAI_dif_crop2, col = cl, main="LAI difference 2000-2014", colNA = "light blue")
+LAI_dif_crop3 <- LAI2020_crop - LAI2014_crop 
+plot(LAI_dif_crop3, col = cl, main="LAI difference 2014-2020", colNA = "light blue")
+# Export
+png("outputs/LAI_diff_crop.png", res = 300, width = 4000, height = 2500)
+par(mfrow = c(2,2))
+plot(LAI_dif_crop1, col = cl, main="LAI difference 2000-2020", colNA = "light blue")
+plot(LAI_dif_crop2, col = cl, main="LAI difference 2000-2014", colNA = "light blue")
+plot(LAI_dif_crop3, col = cl, main="LAI difference 2014-2020", colNA = "light blue")
+dev.off()
+
+# Analyse the frequency distribution of LAI values
+par(mfrow=c(1,3))
+hist(LAI2000_crop,  main="Frequency distribution in 2000", ylim= c(0, 55000), xlim= c(0, 7), xlab = "LAI 2000")
+hist(LAI2014_crop,  main="Frequency distribution in 2014", ylim= c(0, 55000), xlim= c(0, 7), xlab = "LAI 2014")
+hist(LAI2020_crop,  main="Frequency distribution in 2020", ylim= c(0, 55000), xlim= c(0, 7), xlab = "LAI 2020")
+# In 2020, compared with 2000, we can see a decrease in frequency of the highest LAI values, while there's an increase in the lowest values
+# Export
+png("outputs/LAI_crop_hist.png", res=300, width=3000, height=3000)
+par(mfrow=c(1,2))
+hist(LAI2000_crop,  main="Frequency distribution in 2000", ylim= c(0, 55000), xlim= c(0, 7), xlab = "LAI 2000")
+hist(LAI2020_crop,  main="Frequency distribution in 2020", ylim= c(0, 55000), xlim= c(0, 7), xlab = "LAI 2020")
+dev.off()
+
+
+
+
+
+
+
+# Remove NA values
+#length(LAI_dif_crop1[LAI_dif_crop1, na.rm=T])
+#length(LAI_dif_crop2[LAI_dif_crop2, na.rm=T])
+#length(LAI_dif_crop1[LAI_dif_crop1, na.rm=T])
+
+
+
+
+
+
+
 
 
 
