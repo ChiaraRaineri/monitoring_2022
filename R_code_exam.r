@@ -209,6 +209,7 @@ dev.off()
 ext2 <- c(19.0, 23.6, 0.71, 3.84)
 lai_crop2 <- lapply(lai_raster, crop, ext2)
 lai_crop2
+
 # Since I'm using only three images it's not very useful to create a stack, I can use the function names() instead
 names(lai_crop2) <- c("LAI_2000", "LAI_2007", "LAI_2014", "LAI_2020")
 LAI2000_crop <- lai_crop2$LAI_2000
@@ -240,11 +241,12 @@ hist(LAI2020_crop,  main = "Frequency distribution in 2020", ylim = c(0, 55000),
 # Export
 png("outputs/LAI_crop_hist.png", res=300, width=3000, height=3000)
 par(mfrow=c(1,2))
-hist(LAI2000_crop,  main = "Frequency distribution in 2000", ylim = c(0, 55000), xlim = c(0, 7), xlab = "LAI 2000")
-hist(LAI2020_crop,  main = "Frequency distribution in 2020", ylim = c(0, 55000), xlim = c(0, 7), xlab = "LAI 2020")
+hist(LAI2000_crop, col="green", main="Frequency distribution in 2000", ylim=c(0, 55000), xlim=c(0, 7), xlab="LAI 2000")
+hist(LAI2020_crop, col="green", main="Frequency distribution in 2020", ylim=c(0, 55000), xlim=c(0, 7), xlab="LAI 2020")
 dev.off()
 
 # Estimate the changes in LAI in time 
+# From the difference images it may seem that in 2020 there's more vegetation than in 2000, but is it high vegetation (forest) or low vegetation (croplands)?
 # Use classification to divide the pixels of the image into 2 classes (high vegetation and low vegetation)
 # Use the library RStoolbox
 lai_class <- lapply(lai_crop2, unsuperClass, nClasses = 2)
@@ -258,11 +260,11 @@ freq(lai_class[[4]]$map) # 2020
 #      value  count
 # [1,]     1 141735
 # [2,]     2  39381
+total <- length(lai_class[[1]]$map)  # 181116 pixels
 
-sum <- 141735 + 39381
-prop1 <- freq(lai_class[[1]]$map) / sum * 100  # 78.26% of high vegetation, 21.74% of low vegetation
-prop2 <- freq(lai_class[[2]]$map) / sum * 100  # 76.55% of high vegetation, 23.45% of low vegetation
-prop3 <- freq(lai_class[[3]]$map) / sum * 100  # 85.16% of high vegetation, 14.84% of low vegetation
+prop1 <- freq(lai_class[[1]]$map) / total * 100  # 78.26% of high vegetation, 21.74% of low vegetation
+prop2 <- freq(lai_class[[3]]$map) / total * 100  # 83.51% of high vegetation, 16.49% of low vegetation
+prop3 <- freq(lai_class[[4]]$map) / total * 100  # 77.99% of high vegetation, 22.01% of low vegetation
 
 # Building a dataframe in order to plot
 cover <- c("High vegetation", "Low vegetation")
@@ -273,20 +275,20 @@ cover2000 <- ggplot(prop2000, aes(x=cover, y=percent2000, fill=cover)) + geom_ba
 geom_text(aes(label=percent2000), vjust=1.6, color="white", size=3.5) + theme_minimal() + labs(y="Percentage of vegetation cover", x="Cover type") +
 theme(plot.title = element_text(hjust = 0.5))
 # Year 2014
-percent2014 <- c(76.55, 23.45)
+percent2014 <- c(83.51, 16.49)
 prop2014 <- data.frame(cover, percent2014)
 cover2014 <- ggplot(prop2014, aes(x=cover, y=percent2014, fill=cover)) + geom_bar(stat="identity") + ylim(0,100) + labs(title="Vegetation cover proportion in 2014") +
 geom_text(aes(label=percent2014), vjust=1.6, color="white", size=3.5) + theme_minimal() + labs(y="Percentage of vegetation cover", x="Cover type") +
 theme(plot.title = element_text(hjust = 0.5))
 # Year 2020
-percent2020 <- c(85.16, 14.84)
+percent2020 <- c(77.99, 22.01)
 prop2020 <- data.frame(cover, percent2020)
 cover2020 <- ggplot(prop2020, aes(x=cover, y=percent2020, fill=cover)) + geom_bar(stat="identity") + ylim(0,100) + labs(title="Vegetation cover proportion in 2020") +
 geom_text(aes(label=percent2020), vjust=1.6, color="white", size=3.5) + theme_minimal() + labs(y="Percentage of vegetation cover", x="Cover type") +
 theme(plot.title = element_text(hjust = 0.5))
 
 # 2000 and 2020 together
-grid.arrange(cover2000, cover2020, nrow=1)
+grid.arrange(cover2000, cover2020, nrow=1)  # In 2020 there's an increase in low vegetation, as we saw in the histogram where low LAI values were higher
 # 2000 and 2014 together
 grid.arrange(cover2000, cover2014, nrow=1)
 
@@ -297,6 +299,9 @@ dev.off()
 png("outputs/proportions_2.png", res=300, width=3000, height=1500)
 grid.arrange(cover2000, cover2014, nrow=1)
 dev.off()
+
+# Put all the percentages in a data frame
+table <- data.frame(cover, percent2000, percent2014, percent2020)
 
 
 # LINEAR REGRESSION MODEL
