@@ -41,7 +41,7 @@ lai_raster
 lai_stack <- stack(lai_raster)
 lai_stack
 
-# Crop only the area of interest (Nigeria) using coordinates
+# Crop only the area of interest (Democratic Republic of Congo) using coordinates
 # Choose the extension to crop (the first two numbers are longitude and the next numbers are latitude)
 ext <- c(19.6, 28.5, -4.5, 3.5)
 lai_crop <- crop(lai_stack, ext)  # Cropping the whole stack
@@ -205,7 +205,7 @@ dev.off()
 
 ########### Quantitative analysis ###########
 
-# Zoom on the more deforested areas as shown by the LAI and FAPAR qualitative analysis
+# Zoom on the more deforested areas as shown by the LAI and FAPAR qualitative analysis (Congo basin)
 ext2 <- c(19.0, 23.6, 0.71, 3.84)
 lai_crop2 <- lapply(lai_raster, crop, ext2)
 lai_crop2
@@ -313,47 +313,51 @@ plot(sum_diff, col = cl, main="LAI + FAPAR difference 2000-2020", colNA = "light
 
 ########### NDVI ###########
 
-# Fallo per tutta la zona subsaariana
+# NDVI can be used to assess whether the area contain live green vegetation
+# NDVI = (REF_nir – REF_red)/(REF_nir + REF_red)
 
-# I grafici di ggplot non mi dicono niente, meglio ggRGB (guarda code di paola e simone celebrin)
-
+# Import data and apply the raster function 
 ndvi_list <- list.files(pattern = "NDVI")
 ndvi_list
 ndvi_raster <- lapply(ndvi_list, raster)
 ndvi_raster
 ndvi_stack <- stack(ndvi_raster)
 ndvi_stack
-# Cropping
-ndvi_crop <- crop(ndvi_stack, ext)
+
+# Check for background values with the click() function
+click(ndvi_stack$Normalized.Difference.Vegetation.Index.1km.1, n= Inf , id=FALSE, xy =FALSE, cell =FALSE, type ="n", show=TRUE)
+# These soil background pixels are a disturbing factor in the analysis
+# Transform background values of the whole stack into NAs
+ndvi_stack_def <- calc(ndvi_stack, fun=function(x){x[x>0.935] <- NA;return(x)})
+
+# Cropping on Democratic Republic of Congo
+ndvi_crop <- crop(ndvi_stack_def, ext)
+plot(ndvi_crop)
+
+# Use ggRGB to plot the image with the different years in the RGB channels
+# Where there are higher values the image takes the red, green or blue color according to the year assigned to each channel
+# In this way we can understand where and in which year there were higher values of NDVI
+# In the red channel is the year 2000, in the blue channel is 2014 and in the green channel is 2020
+ggRGB(ndvi_crop, r=1, g=4, b=3, stretch="Lin") 
+
 NDVI_2000 <- ndvi_crop$Normalized.Difference.Vegetation.Index.1km.1
 NDVI_2007 <- ndvi_crop$Normalized.Difference.Vegetation.Index.1km.2
 NDVI_2014 <- ndvi_crop$Normalized.Difference.Vegetation.Index.1km.3
 NDVI_2020 <- ndvi_crop$Normalized.Difference.Vegetation.Index.1km.4
 
-# Let's do a ggplot with the palette "viridis"
-p2000_ndvi <- ggplot() + geom_raster(NDVI_2000, mapping = aes(x=x, y=y, fill=Normalized.Difference.Vegetation.Index.1km.1)) +
-scale_fill_viridis() + theme_bw() + ggtitle("NDVI in 2000") + labs(fill="NDVI") +
-theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-p2007_ndvi <- ggplot() + geom_raster(NDVI_2007, mapping = aes(x=x, y=y, fill=Normalized.Difference.Vegetation.Index.1km.2)) +
-scale_fill_viridis() + theme_bw() + ggtitle("NDVI in 2007") + labs(fill="NDVI") +
-theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-p2014_ndvi <- ggplot() + geom_raster(NDVI_2014, mapping = aes(x=x, y=y, fill=Normalized.Difference.Vegetation.Index.1km.3)) +
-scale_fill_viridis() + theme_bw() + ggtitle("NDVI in 2014") + labs(fill="NDVI") +
-theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-p2020_ndvi <- ggplot() + geom_raster(NDVI_2020, mapping = aes(x=x, y=y, fill=Normalized.Difference.Vegetation.Index.1km.4)) +
-scale_fill_viridis() + theme_bw() + ggtitle("NDVI in 2020") + labs(fill="NDVI") +
-theme(plot.title = element_text(hjust = 0.5)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
-# Put the plots in a multiframe
-grid.arrange(p2000_ndvi, p2007_ndvi, p2014_ndvi, p2020_ndvi, nrow=2)
-# Exporting
-png("outputs/NDVI_all_plots.png", res = 300, width = 4000, height = 2500)
-grid.arrange(p2000_ndvi, p2007_ndvi, p2014_ndvi, p2020_ndvi, nrow=2)
-dev.off()
+# Check for background values with the click() function
+click(NDVI_2000, n= Inf , id=FALSE, xy =FALSE, cell =FALSE, type ="n", show=TRUE)
+# These soil background pixels are a disturbing factor in the analysis
+# Transform background values into NAs
+NDVI_2000_def <- calc(NDVI_2000, fun=function(x){x[x>0.935] <- NA;return(x)})
+NDVI_2014_def <- calc(NDVI_2014, fun=function(x){x[x>0.935] <- NA;return(x)})
+NDVI_2014_def <- calc(NDVI_2020, fun=function(x){x[x>0.935] <- NA;return(x)})
 
+r <- NDVI_2000_def <- calc(NDVI_2000, fun=function(x){x[x>0.935] <- NA;return(x)})
+b <- NDVI_2014_def <- calc(NDVI_2014, fun=function(x){x[x>0.935] <- NA;return(x)})
+g <- NDVI_2014_def <- calc(NDVI_2020, fun=function(x){x[x>0.935] <- NA;return(x)})
 
-plot(ndvi_crop)
-ggRGB(ndvi_crop, r=1, g=3, b=2, stretch="Lin")
-
+ggRGB(ndvi_crop, r=r, g=g, b=b, stretch="Lin") 
 
 
 
