@@ -1,4 +1,4 @@
-# Multi-temporal analysis of deforestation and desertification in the Congo basin (Democratic Republic of Congo) and in Sahel region
+# Multi-temporal analysis of deforestation and desertification in the Congo basin (Democratic Republic of Congo) and in Africa
 
 # Making sure that the packages are installed and recalling the libraries
 # If the package is not installed, install it, if not, recall it
@@ -323,49 +323,44 @@ ndvi_raster <- lapply(ndvi_list, raster)
 ndvi_raster
 ndvi_stack <- stack(ndvi_raster)
 ndvi_stack
+# Cropping on Democratic Republic of Congo
+ndvi_crop <- crop(ndvi_stack, ext)
+plot(ndvi_crop)
 
 # Check for background values with the click() function
-click(ndvi_stack$Normalized.Difference.Vegetation.Index.1km.1, n= Inf , id=FALSE, xy =FALSE, cell =FALSE, type ="n", show=TRUE)
+click(ndvi_crop$Normalized.Difference.Vegetation.Index.1km.1, n= Inf , id=FALSE, xy =FALSE, cell =FALSE, type ="n", show=TRUE)
 # These soil background pixels are a disturbing factor in the analysis
 # Transform background values of the whole stack into NAs
-ndvi_stack_def <- calc(ndvi_stack, fun=function(x){x[x>0.935] <- NA;return(x)})
-
-# Cropping on Democratic Republic of Congo
-ndvi_crop <- crop(ndvi_stack_def, ext)
-plot(ndvi_crop)
+ndvi_crop_def <- calc(ndvi_crop, fun=function(x){x[x>0.935] <- NA;return(x)})
 
 # Use ggRGB to plot the image with the different years in the RGB channels
 # Where there are higher values the image takes the red, green or blue color according to the year assigned to each channel
 # In this way we can understand where and in which year there were higher values of NDVI
 # In the red channel is the year 2000, in the blue channel is 2014 and in the green channel is 2020
-ggRGB(ndvi_crop, r=1, g=4, b=3, stretch="Lin") 
+ggRGB(ndvi_crop_def, r=1, g=4, b=3, stretch="Lin") + theme_bw() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+# There has been a lot of variation from 2000 to 2014 to 2020
 
-NDVI_2000 <- ndvi_crop$Normalized.Difference.Vegetation.Index.1km.1
-NDVI_2007 <- ndvi_crop$Normalized.Difference.Vegetation.Index.1km.2
-NDVI_2014 <- ndvi_crop$Normalized.Difference.Vegetation.Index.1km.3
-NDVI_2020 <- ndvi_crop$Normalized.Difference.Vegetation.Index.1km.4
+# Export
+png("outputs/NDVI_RGB.png", res=300, width=3000, height=3000)
+ggRGB(ndvi_crop_def, r=1, g=4, b=3, stretch="Lin") + theme_bw() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+dev.off()
 
-# Check for background values with the click() function
-click(NDVI_2000, n= Inf , id=FALSE, xy =FALSE, cell =FALSE, type ="n", show=TRUE)
-# These soil background pixels are a disturbing factor in the analysis
-# Transform background values into NAs
-NDVI_2000_def <- calc(NDVI_2000, fun=function(x){x[x>0.935] <- NA;return(x)})
-NDVI_2014_def <- calc(NDVI_2014, fun=function(x){x[x>0.935] <- NA;return(x)})
-NDVI_2014_def <- calc(NDVI_2020, fun=function(x){x[x>0.935] <- NA;return(x)})
+# Crop the whole Africa
+ext3 <- c(-18.2, 55.1, -35.6, 38.1)
+ndvi_crop_africa <- crop(ndvi_stack, ext3)
+# plot(ndvi_crop_africa$Normalized.Difference.Vegetation.Index.1km.1)
+# Remove background pixels (also the water)
+ndvi_crop_africa_def <- calc(ndvi_crop_africa, fun=function(x){x[x>0.935] <- NA;return(x)})
+# plot(ndvi_crop_africa_def$layer.1)
+# Plot in RGB
+ggRGB(ndvi_crop_africa_def, r=1, g=4, b=3, stretch="Lin") + theme_bw() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+ theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(), panel.border = element_blank())
 
-r <- NDVI_2000_def <- calc(NDVI_2000, fun=function(x){x[x>0.935] <- NA;return(x)})
-b <- NDVI_2014_def <- calc(NDVI_2014, fun=function(x){x[x>0.935] <- NA;return(x)})
-g <- NDVI_2014_def <- calc(NDVI_2020, fun=function(x){x[x>0.935] <- NA;return(x)})
-
-ggRGB(ndvi_crop, r=r, g=g, b=b, stretch="Lin") 
-
-
-
-
-
-
-
-
+# Export
+png("outputs/NDVI_RGB_africa.png", res=300, width=3000, height=3000)
+ggRGB(ndvi_crop_africa_def, r=1, g=4, b=3, stretch="Lin") + theme_bw() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+ theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(), panel.border = element_blank())
+dev.off()
 
 
 
