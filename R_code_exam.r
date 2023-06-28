@@ -304,8 +304,9 @@ dev.off()
 table <- data.frame(cover, percent2000, percent2014, percent2020)
 
 
-# LINEAR REGRESSION MODEL
-
+# Sum the differences in LAI and FAPAR and plot it
+sum_diff <- LAI_dif4 + FAPAR_dif4
+plot(sum_diff, col = cl, main="LAI + FAPAR difference 2000-2020", colNA = "light blue") 
 
 
 
