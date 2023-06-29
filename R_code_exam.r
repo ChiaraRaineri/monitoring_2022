@@ -326,10 +326,10 @@ grid.arrange(cover2000, cover2014, nrow=1)
 dev.off()
 
 # Put all the percentages in a data frame
-table <- data.frame(cover, percent2000, percent2014, percent2007, percent2020)
-#           cover percent2000 percent2014 percent2007 percent2020
-# 1 High vegetation       78.26       83.51       76.09       77.99
-# 2  Low vegetation       21.74       16.49       23.90       22.01
+table <- data.frame(cover, percent2000, percent2007, percent2014, percent2020)
+#           cover percent2000 percent2007 percent2014 percent2020
+# 1 High vegetation       78.26       76.09       83.51       77.99
+# 2  Low vegetation       21.74       23.90       16.49       22.01
 
 
 
