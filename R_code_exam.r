@@ -1,4 +1,4 @@
-# Multi-temporal analysis of deforestation in the Congo basin (Democratic Republic of Congo) and in Africa
+# Multi-temporal analysis of deforestation in the Congo basin (Democratic Republic of Congo)
 
 # Making sure that the packages are installed and recalling the libraries
 # If the package is not installed, install it, if not, recall it
@@ -28,7 +28,7 @@ setwd("C:/lab/exam")
 
 ########### LAI ###########
 
-# LAI is useful to see the extent of the vegetation cover in particular for forests, and we can use it to estimate the entity of deforestation
+# LAI is useful to assess the extent of the vegetation cover, in particular for forests, and we can use it to estimate the entity of deforestation
 
 # Make a list with the available files using a common pattern between all of them
 lai_list <- list.files(pattern = "LAI")
@@ -41,12 +41,12 @@ lai_raster
 lai_stack <- stack(lai_raster)
 lai_stack
 
-# Crop only the area of interest (Democratic Republic of Congo) using coordinates
+# Crop only the area of interest (the northern region of Democratic Republic of Congo, where the Congo basin is) using coordinates
 # Choose the extension to crop (the first two numbers are longitude and the next numbers are latitude)
 ext <- c(19.6, 28.5, -4.5, 3.5)
 lai_crop <- crop(lai_stack, ext)  # Cropping the whole stack
 # Let's see if the cropping was effective
-plot(lai_crop$Leaf.Area.Index.1km.1)  # I can see the name computing lai_stack and looking at "names"
+plot(lai_crop$Leaf.Area.Index.1km.1)  # I can see the name by computing lai_stack and looking at "names"
 
 # Because I cropped all the data together with the same extent I should assign a name to each file
 LAI_2000 <- lai_crop$Leaf.Area.Index.1km.1
@@ -110,8 +110,8 @@ abline(0, 1, col="red")
 dev.off()
 
 # Now compute the difference between the images (estimate the changes in time in termn of the amount of forest which have been lost or gained)
-par(mfrow = c(2,2))
 cl <- diverging_hcl(5, "Red-Green")
+par(mfrow = c(2,2))
 LAI_dif1 <- LAI_2007 - LAI_2000 # Positive values are those in which LAI was higher in 2007 (green), while negatives were higher in 2000 (red)
 plot(LAI_dif1, col = cl, main="LAI difference 2000-2007", colNA = "light blue")
 LAI_dif2 <- LAI_2014 - LAI_2007 
@@ -139,7 +139,7 @@ dev.off()
 ########### FAPAR ###########
 
 # FAPAR is useful to estimate the green and alive elements of the canopy
-# It's less precise than LAI to visualize differences in vegetation cover
+# It's less precise than LAI to visualize differences in vegetation cover (at least in this case)
 
 # Data import
 fapar_list <- list.files(pattern = "FAPAR")
@@ -148,7 +148,7 @@ fapar_raster <- lapply(fapar_list, raster)
 fapar_raster
 fapar_stack <- stack(fapar_raster)
 fapar_stack
-# Cropping
+# Cropping (with the same extension as before)
 fapar_crop <- crop(fapar_stack, ext)
 FAPAR_2000 <- fapar_crop$Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.1
 FAPAR_2007 <- fapar_crop$Fraction.of.Absorbed.Photosynthetically.Active.Radiation.1km.2
@@ -205,14 +205,15 @@ dev.off()
 
 ########### Quantitative analysis ###########
 
-# Zoom on the more deforested areas as shown by the LAI and FAPAR qualitative analysis (Congo basin)
+# Zoom in the more deforested areas as shown by the LAI and FAPAR qualitative analysis (Congo basin)
 ext2 <- c(19.0, 23.6, 0.71, 3.84)
 lai_crop2 <- lapply(lai_raster, crop, ext2)
 lai_crop2
 
-# Since I'm using only three images it's not very useful to create a stack, I can use the function names() instead
+# Other than the function stack() I can use directly the function names()
 names(lai_crop2) <- c("LAI_2000", "LAI_2007", "LAI_2014", "LAI_2020")
 LAI2000_crop <- lai_crop2$LAI_2000
+LAI2007_crop <- lai_crop2$LAI_2007
 LAI2014_crop <- lai_crop2$LAI_2014
 LAI2020_crop <- lai_crop2$LAI_2020
 
@@ -220,25 +221,34 @@ LAI2020_crop <- lai_crop2$LAI_2020
 par(mfrow = c(2,2))
 LAI_dif_crop1 <- LAI2020_crop - LAI2000_crop # Positive values are those in which LAI was higher in 2020 (green), while negatives were higher in 2000 (red)
 plot(LAI_dif_crop1, col = cl, main="LAI difference 2000-2020", colNA = "light blue")
-LAI_dif_crop2 <- LAI2014_crop - LAI2000_crop
-plot(LAI_dif_crop2, col = cl, main="LAI difference 2000-2014", colNA = "light blue")
-LAI_dif_crop3 <- LAI2020_crop - LAI2014_crop 
-plot(LAI_dif_crop3, col = cl, main="LAI difference 2014-2020", colNA = "light blue")
+LAI_dif_crop2 <- LAI2007_crop - LAI2000_crop
+plot(LAI_dif_crop2, col = cl, main="LAI difference 2000-2007", colNA = "light blue")
+LAI_dif_crop3 <- LAI2014_crop - LAI2007_crop
+plot(LAI_dif_crop3, col = cl, main="LAI difference 2007-2014", colNA = "light blue")
+LAI_dif_crop4 <- LAI2020_crop - LAI2014_crop 
+plot(LAI_dif_crop4, col = cl, main="LAI difference 2014-2020", colNA = "light blue")
 # Export
 png("outputs/LAI_diff_crop.png", res = 300, width = 4000, height = 2500)
 par(mfrow = c(2,2))
 plot(LAI_dif_crop1, col = cl, main="LAI difference 2000-2020", colNA = "light blue")
-plot(LAI_dif_crop2, col = cl, main="LAI difference 2000-2014", colNA = "light blue")
-plot(LAI_dif_crop3, col = cl, main="LAI difference 2014-2020", colNA = "light blue")
+plot(LAI_dif_crop2, col = cl, main="LAI difference 2000-2007", colNA = "light blue")
+plot(LAI_dif_crop3, col = cl, main="LAI difference 2007-2014", colNA = "light blue")
+plot(LAI_dif_crop4, col = cl, main="LAI difference 2014-2020", colNA = "light blue")
+dev.off()
+# Export only the difference between 2000 and 2020
+png("outputs/LAI_diff_crop1.png", res = 300, width = 4000, height = 2500)
+plot(LAI_dif_crop1, col = cl, main="LAI difference 2000-2020", colNA = "light blue")
 dev.off()
 
+
 # Analyse the frequency distribution of LAI values
-par(mfrow=c(1,3))
+par(mfrow=c(2,2))
 hist(LAI2000_crop,  main = "Frequency distribution in 2000", ylim = c(0, 55000), xlim = c(0, 7), xlab = "LAI 2000")
+hist(LAI2007_crop,  main = "Frequency distribution in 2007", ylim = c(0, 55000), xlim = c(0, 7), xlab = "LAI 2007")
 hist(LAI2014_crop,  main = "Frequency distribution in 2014", ylim = c(0, 55000), xlim = c(0, 7), xlab = "LAI 2014")
 hist(LAI2020_crop,  main = "Frequency distribution in 2020", ylim = c(0, 55000), xlim = c(0, 7), xlab = "LAI 2020")
 # In 2020, compared with 2000, we can see a decrease in frequency of the highest LAI values, while there's an increase in the lowest values
-# Export
+# Export only the 2000 and the 2020 plots
 png("outputs/LAI_crop_hist.png", res=300, width=3000, height=3000)
 par(mfrow=c(1,2))
 hist(LAI2000_crop, col="green", main="Frequency distribution in 2000", ylim=c(0, 55000), xlim=c(0, 7), xlab="LAI 2000")
@@ -250,21 +260,30 @@ dev.off()
 # Use classification to divide the pixels of the image into 2 classes (high vegetation and low vegetation)
 # Use the library RStoolbox
 lai_class <- lapply(lai_crop2, unsuperClass, nClasses = 2)
-plot(lai_class[[1]]$map) # In this case class 1 is white, that is high vegetation, and class 2 is green, that is low vegetation and water
+plot(lai_class[[1]]$map) # In this case class 1 is white, that is low vegetation and water, and class 2 is green, that is high vegetation
+
+png("outputs/LAI_classes.png", res = 300, width = 2000, height = 2500)
+par(mfrow = c(2,1))
+plot(lai_class[[1]]$map, main="Pixel classes in 2000")
+plot(lai_class[[4]]$map, main="Pixel classes in 2020")
+dev.off()
+
 # Frequencies of the pixels
-freq(lai_class[[1]]$map) # High vegetation (class 1) = 141735 pixels # Low vegetation and water (class 2) = 39381 pixels # 2000
+freq(lai_class[[1]]$map) # High vegetation (class 2) = 140690 pixels # Low vegetation and water (class 1) = 40426 pixels # 2000
+freq(lai_class[[2]]$map) # 2007
 freq(lai_class[[3]]$map) # 2014
 freq(lai_class[[4]]$map) # 2020
 # The sum of the pixels is the same for every image
 # freq(lai_class[[1]]$map)
 #      value  count
-# [1,]     1 141735
-# [2,]     2  39381
+# [1,]     1 140690
+# [2,]     2  40426
 total <- length(lai_class[[1]]$map)  # 181116 pixels
 
 prop1 <- freq(lai_class[[1]]$map) / total * 100  # 78.26% of high vegetation, 21.74% of low vegetation
-prop2 <- freq(lai_class[[3]]$map) / total * 100  # 83.51% of high vegetation, 16.49% of low vegetation
-prop3 <- freq(lai_class[[4]]$map) / total * 100  # 77.99% of high vegetation, 22.01% of low vegetation
+prop2 <- freq(lai_class[[2]]$map) / total * 100  # 76.09% of high vegetation, 23.90% of low vegetation
+prop3 <- freq(lai_class[[3]]$map) / total * 100  # 83.51% of high vegetation, 16.49% of low vegetation
+prop4 <- freq(lai_class[[4]]$map) / total * 100  # 77.99% of high vegetation, 22.01% of low vegetation
 
 # Building a dataframe in order to plot
 cover <- c("High vegetation", "Low vegetation")
@@ -272,6 +291,12 @@ cover <- c("High vegetation", "Low vegetation")
 percent2000 <- c(78.26, 21.74)
 prop2000 <- data.frame(cover, percent2000)
 cover2000 <- ggplot(prop2000, aes(x=cover, y=percent2000, fill=cover)) + geom_bar(stat="identity") + ylim(0,100) + labs(title="Vegetation cover proportion in 2000") +
+geom_text(aes(label=percent2000), vjust=1.6, color="white", size=3.5) + theme_minimal() + labs(y="Percentage of vegetation cover", x="Cover type") +
+theme(plot.title = element_text(hjust = 0.5))
+# Year 2007
+percent2007 <- c(76.09, 23.90)
+prop2007 <- data.frame(cover, percent2007)
+cover2007 <- ggplot(prop2007, aes(x=cover, y=percent2007, fill=cover)) + geom_bar(stat="identity") + ylim(0,100) + labs(title="Vegetation cover proportion in 2007") +
 geom_text(aes(label=percent2000), vjust=1.6, color="white", size=3.5) + theme_minimal() + labs(y="Percentage of vegetation cover", x="Cover type") +
 theme(plot.title = element_text(hjust = 0.5))
 # Year 2014
@@ -301,7 +326,11 @@ grid.arrange(cover2000, cover2014, nrow=1)
 dev.off()
 
 # Put all the percentages in a data frame
-table <- data.frame(cover, percent2000, percent2014, percent2020)
+table <- data.frame(cover, percent2000, percent2014, percent2007, percent2020)
+#           cover percent2000 percent2014 percent2007 percent2020
+# 1 High vegetation       78.26       83.51       76.09       77.99
+# 2  Low vegetation       21.74       16.49       23.90       22.01
+
 
 
 # Sum the differences in LAI and FAPAR and plot it
