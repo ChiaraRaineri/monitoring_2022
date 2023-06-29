@@ -1,4 +1,4 @@
-# Multi-temporal analysis of deforestation and desertification in the Congo basin (Democratic Republic of Congo) and in Africa
+# Multi-temporal analysis of deforestation in the Congo basin (Democratic Republic of Congo) and in Africa
 
 # Making sure that the packages are installed and recalling the libraries
 # If the package is not installed, install it, if not, recall it
