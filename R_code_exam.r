@@ -217,7 +217,7 @@ LAI2007_crop <- lai_crop2$LAI_2007
 LAI2014_crop <- lai_crop2$LAI_2014
 LAI2020_crop <- lai_crop2$LAI_2020
 
-# Compute the differences between 2000, 2014 and 2020 in the cropped area
+# Compute the differences between 2000, 2007, 2014 and 2020 in the cropped area
 par(mfrow = c(2,2))
 LAI_dif_crop1 <- LAI2020_crop - LAI2000_crop # Positive values are those in which LAI was higher in 2020 (green), while negatives were higher in 2000 (red)
 plot(LAI_dif_crop1, col = cl, main="LAI difference 2000-2020", colNA = "light blue")
